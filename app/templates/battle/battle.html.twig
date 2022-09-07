@@ -2,8 +2,13 @@
 
 {% block title %}BATTLESHIP!{% endblock %}
 
+{% block javascripts %}
+    {{ encore_entry_script_tags('battle') }}
+{% endblock %}
 
 {% block body %}
+    <div id="button-home" class="button-create-match home">Home</div>
+
     <h1>BATTLE</h1>
 
     <h3>user1 VS user2</h3>
