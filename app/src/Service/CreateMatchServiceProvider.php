@@ -15,7 +15,7 @@ class CreateMatchServiceProvider
         try {
             return random_int(100, 1000) * 10 + $this->security->getUser()->getId();
         } catch (\Exception $e) {
-            return $this->security->getUser()->getId() + 123123;
+            return 123120 + $this->security->getUser()->getId();
         }
     }
 }
