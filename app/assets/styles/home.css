@@ -16,6 +16,15 @@ h1 {
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
+h3 {
+    font-size: 35px;
+    margin: 30px 0;
+    padding-bottom: 10px;
+    text-align: center;
+    color: white;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
 .button-create-match {
     position: absolute;
     margin-left: 90vw;
@@ -25,9 +34,90 @@ h1 {
     border-radius: 2px;
     color: greenyellow;
     background-color: #494949;
+    cursor: grab;
 }
 
 .button-create-match:hover {
     color: #aaff1f;
     background-color: #3a3a3a;
+}
+
+.form-section-create-match {
+    padding: 30px 0;
+    display: flex;
+    justify-content: space-evenly;
+    width: 500px;
+}
+
+.modal-create-match {
+    display: none;
+    background-color: rgba(248, 248, 255, 0.5);
+    margin-left: 36vw;
+    margin-top: 5vw;
+    border: 1px solid black;
+    border-radius: 5px;
+    position: absolute;
+    height: 450px;
+}
+
+.form-select-button-create-match {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 25px;
+    color: black;
+    background-color: white;
+    text-shadow: -1px -1px 0 #969696FF, 1px -1px 0 #969696FF, -1px 1px 0 #969696FF, 1px 1px 0 #969696FF;
+}
+
+.form-select-button-create-match:hover {
+    background-color: darkgray;
+    cursor: grab;
+}
+
+.button-submit-create-match {
+    width: 200px;
+    margin-top: 50px;
+    margin-left: 30%;
+    text-align: center;
+    border: 1px solid black;
+
+    font-size: 30px;
+    color: greenyellow;
+    background-color: #494949;
+    cursor: grab;
+    border-radius: 2px;
+}
+
+.button-submit-create-match:hover {
+    color: #aaff1f;
+    background-color: #3a3a3a;
+}
+
+.modal-close-button {
+    margin-top: -100px;
+    margin-left: 450px;
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    color: red;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 30px;
+    font-weight: bolder;
+}
+
+.modal-close-button:hover {
+    background-color: lightgray;
+    cursor: grab;
+}
+
+.selected-ship {
+    background-color: darkgray;
+}
+
+.selected-shot {
+    background-color: darkgray;
 }
