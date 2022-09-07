@@ -13,7 +13,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class BattleController extends AbstractController
 {
-    #[Route('/battle', name: 'create_matchPOST', methods: ['post'])]
+    #[Route('/battle', name: 'show_battle', methods: ['get'])]
+    public function showBattle(): Response
+    {
+        return $this->getUser() ? $this->render('/battle/battle.html.twig') : $this->redirectToRoute('app_login');
+    }
+
+    #[Route('/battle', name: 'create_battle', methods: ['post'])]
     public function createBattle(Request $request, CreateMatchServiceProvider $service, EntityManagerInterface $entityManager): Response
     {
         $requestParameters = $request->request;
@@ -31,7 +37,12 @@ class BattleController extends AbstractController
             return new JsonResponse(['exception' => $exception]);
         }
 
-        return new JsonResponse(true);
+        $battleId = $entityManager->getRepository(Battle::class)->findOneBy([
+            'user1_id' => $this->getUser(),
+            'password' => $battle->getPassword(),
+        ])->getId();
+
+        return new JsonResponse(['status' => true, 'battle_id' => $battleId, 'password' => $battle->getPassword()]);
 
     }
 
