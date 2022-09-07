@@ -13,6 +13,14 @@ let submitModalButton = document.getElementById('button-submit-create-match')
 let createMatchButton = document.getElementById('button-create-match')
 
 createMatchButton.addEventListener("click", ev => {
+    let lastSelectedShot = document.getElementsByClassName('selected-shot').item(0)
+    let lastSelectedShip = document.getElementsByClassName('selected-ship').item(0)
+
+    if (lastSelectedShot !== null && lastSelectedShip !== null) {
+        lastSelectedShot.classList.remove('selected-shot')
+        lastSelectedShip.classList.remove('selected-ship')
+    }
+
     createMatchModal.style.display = 'block'
 })
 
