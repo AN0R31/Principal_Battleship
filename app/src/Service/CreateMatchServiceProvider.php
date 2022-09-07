@@ -10,12 +10,14 @@ class CreateMatchServiceProvider
     {
     }
 
-    public function matchPassword(): int
+    public function matchPassword(): string
     {
+        $userId = $this->security->getUser()->getId();
+
         try {
-            return random_int(100, 1000) * 10 + $this->security->getUser()->getId();
+            return random_int(10000000, 100000000) . $userId;
         } catch (\Exception $e) {
-            return 123120 + $this->security->getUser()->getId();
+            return 12233120 . $userId;
         }
     }
 }
