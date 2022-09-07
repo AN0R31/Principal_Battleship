@@ -6,5 +6,29 @@
 {% block body %}
     <h1>BATTLESHIP</h1>
 
-    <a href="/createMatch"><div class="button-create-match">Create Match</div></a>
+    <div id="button-create-match" class="button-create-match">Create Match</div>
+
+    <div id="modal-create-match" class="modal-create-match">
+        <h3>Create Match</h3>
+        <div id="modal-close-button" class="modal-close-button">X</div>
+        <div class="form-create-match" id="form-create-match">
+
+            <div id="form-section-ships-create-match" class="form-section-create-match">
+                <div data-value="3" class="form-select-button-create-match">3 ships</div>
+                <div data-value="5" class="form-select-button-create-match">5 ships</div>
+                <div data-value="7" class="form-select-button-create-match">7 ships</div>
+            </div>
+            <br>
+
+            <div id="form-section-shots-create-match" class="form-section-create-match">
+                <div data-value="1" class="form-select-button-create-match">1 shot&nbsp;</div>
+                <div data-value="3" class="form-select-button-create-match">3 shots</div>
+                <div data-value="5" class="form-select-button-create-match">5 shots</div>
+            </div>
+
+            <div id="button-submit-create-match" class="button-submit-create-match">
+                START
+            </div>
+        </div>
+    </div>
 {% endblock %}
