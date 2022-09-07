@@ -1,0 +1,33 @@
+body {
+    @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap');
+    font-family: 'Roboto Mono', monospace;
+    background-color: dimgray;
+}
+
+a {
+    text-decoration: none;
+}
+
+h1 {
+    font-size: 50px;
+    text-align: center;
+    margin: 0 0;
+    color: white;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.button-create-match {
+    position: absolute;
+    margin-left: 90vw;
+    margin-top: -45px;
+    padding: 10px 20px;
+    border: 1px solid black;
+    border-radius: 2px;
+    color: greenyellow;
+    background-color: #494949;
+}
+
+.button-create-match:hover {
+    color: #aaff1f;
+    background-color: #3a3a3a;
+}
