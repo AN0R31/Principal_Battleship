@@ -16,6 +16,8 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "pusher": "^5.1.1-beta"
+        "axios": "^0.27.2",
+        "pusher": "^5.1.1-beta",
+        "sweetalert2": "^11.4.32"
     }
 }

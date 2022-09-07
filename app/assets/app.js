@@ -11,5 +11,8 @@ import './styles/home.css';
 
 // start the Stimulus application
 import './bootstrap';
+import axios from "axios";
+import sweetalert2 from "sweetalert2";
 
+import './javascript/customAlerts';
 import './javascript/home';
