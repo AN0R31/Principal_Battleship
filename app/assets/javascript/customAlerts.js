@@ -29,19 +29,20 @@ export function customOneFieldForm(title, submitButtonName) {
         showCancelButton: true,
         confirmButtonText: submitButtonName,
     }).then(response => {
+        if (response.isConfirmed) {
+            const dataToSend = new FormData()
+            dataToSend.set('password', response.value)
 
-        const dataToSend = new FormData()
-        dataToSend.set('password', response.value)
-
-        axios.post(
-            '/joinBattle',
-            dataToSend,
-        ).then(function (response) {
-            if (response.data.status === true) {
-                window.location.href = '/battle?battle_id=' + response.data.battle_id + '&password=' + dataToSend.get('password')
-            } else {
-                customAlertError(response.data.message)
-            }
-        });
+            axios.post(
+                '/joinBattle',
+                dataToSend,
+            ).then(function (response) {
+                if (response.data.status === true) {
+                    window.location.href = '/battle?battle_id=' + response.data.battle_id + '&password=' + dataToSend.get('password')
+                } else {
+                    customAlertError(response.data.message)
+                }
+            });
+        }
     })
 }
