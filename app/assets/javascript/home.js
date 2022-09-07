@@ -61,9 +61,8 @@ submitModalButton.addEventListener("click", ev => {
             '/battle',
             dataToSend,
         ).then(function (response) {
-            console.log(response.data, typeof response.data)
-            if (response.data === true) {
-                window.location.href = '/battle';
+            if (response.data.status === true) {
+                window.location.href = '/battle?battle_id='+response.data.battle_id+'&password='+response.data.password;
             } else {
                 customAlertError('Something went wrong. Please try again!')
             }
