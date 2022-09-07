@@ -11,10 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class CreateMatchController extends AbstractController
+class BattleController extends AbstractController
 {
-    #[Route('/createMatch', name: 'create_matchPOST', methods: ['post'])]
-    public function createMatch(Request $request, CreateMatchServiceProvider $service, EntityManagerInterface $entityManager): Response
+    #[Route('/battle', name: 'create_matchPOST', methods: ['post'])]
+    public function createBattle(Request $request, CreateMatchServiceProvider $service, EntityManagerInterface $entityManager): Response
     {
         $requestParameters = $request->request;
 
