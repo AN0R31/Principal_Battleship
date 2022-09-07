@@ -58,10 +58,11 @@ submitModalButton.addEventListener("click", ev => {
         dataToSend.set('shots', numberOfShots)
 
         axios.post(
-            '/createMatch',
+            '/battle',
             dataToSend,
         ).then(function (response) {
             console.log('sent')
+            console.log(response.data)
         });
 
     } else {
