@@ -14,9 +14,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class BattleController extends AbstractController
 {
     #[Route('/battle', name: 'show_battle', methods: ['get'])]
-    public function showBattle(): Response
+    public function showBattle(Request $request): Response
     {
-        return $this->getUser() ? $this->render('/battle/battle.html.twig') : $this->redirectToRoute('app_login');
+        if (!$this->getUser())
+            return $this->redirectToRoute('app_login');
+
+        return sizeof($request->query) === 2 ? $this->render('/battle/battle.html.twig') : $this->redirectToRoute('app_home');
+
     }
 
     #[Route('/battle', name: 'create_battle', methods: ['post'])]
