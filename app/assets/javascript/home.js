@@ -15,11 +15,13 @@ let createMatchButton = document.getElementById('button-create-match')
 let joinMatchButton = document.getElementById('button-join-match')
 
 createMatchButton.addEventListener("click", ev => {
-    let lastSelectedShot = document.getElementsByClassName('selected-shot').item(0)
-    let lastSelectedShip = document.getElementsByClassName('selected-ship').item(0)
+    let lastSelectedShot = document.getElementsByClassName('selected-shot')?.item(0)
+    let lastSelectedShip = document.getElementsByClassName('selected-ship')?.item(0)
 
-    if (lastSelectedShot !== null && lastSelectedShip !== null) {
+    if (lastSelectedShot !== null) {
         lastSelectedShot.classList.remove('selected-shot')
+    }
+    if (lastSelectedShip !== null) {
         lastSelectedShip.classList.remove('selected-ship')
     }
 
