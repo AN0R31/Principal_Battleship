@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import {customAlertError} from "./customAlerts";
+import {customAlertError, customOneFieldForm} from "./customAlerts";
 
 let createMatchModal = document.getElementById('modal-create-match')
 
@@ -12,6 +12,8 @@ let submitModalButton = document.getElementById('button-submit-create-match')
 
 let createMatchButton = document.getElementById('button-create-match')
 
+let joinMatchButton = document.getElementById('button-join-match')
+
 createMatchButton.addEventListener("click", ev => {
     let lastSelectedShot = document.getElementsByClassName('selected-shot').item(0)
     let lastSelectedShip = document.getElementsByClassName('selected-ship').item(0)
@@ -22,6 +24,10 @@ createMatchButton.addEventListener("click", ev => {
     }
 
     createMatchModal.style.display = 'block'
+})
+
+joinMatchButton.addEventListener("click", ev => {
+    customOneFieldForm('Insert Battle Key:', 'Join')
 })
 
 for (let shipsButton of shipsButtons) {

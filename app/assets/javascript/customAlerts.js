@@ -1,6 +1,7 @@
 import sweetalert2 from "sweetalert2";
+import axios from "axios";
 
-export function customAlertError(message){
+export function customAlertError(message) {
     sweetalert2.fire({
         icon: 'error',
         title: 'Oops...',
@@ -8,12 +9,39 @@ export function customAlertError(message){
     })
 }
 
-export function customAlertSuccess(message){
-    Swal.fire({
+export function customAlertSuccess(message) {
+    sweetalert2.fire({
         position: 'center',
         icon: 'success',
         title: message,
         showConfirmButton: false,
         timer: 1500
+    })
+}
+
+export function customOneFieldForm(title, submitButtonName) {
+    sweetalert2.fire({
+        title: title,
+        input: 'text',
+        inputAttributes: {
+            autocapitalize: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonText: submitButtonName,
+    }).then(response => {
+
+        const dataToSend = new FormData()
+        dataToSend.set('password', response.value)
+
+        axios.post(
+            '/joinBattle',
+            dataToSend,
+        ).then(function (response) {
+            if (response.data.status === true) {
+                window.location.href = '/battle?battle_id=' + response.data.battle_id + '&password=' + dataToSend.get('password')
+            } else {
+                customAlertError(response.data.message)
+            }
+        });
     })
 }
