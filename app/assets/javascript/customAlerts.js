@@ -34,7 +34,7 @@ export function customOneFieldForm(title, submitButtonName) {
             dataToSend.set('password', response.value)
 
             axios.post(
-                '/joinBattle',
+                '/battle/join',
                 dataToSend,
             ).then(function (response) {
                 if (response.data.status === true) {

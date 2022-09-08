@@ -66,7 +66,7 @@ submitModalButton.addEventListener("click", ev => {
         dataToSend.set('shots', numberOfShots)
 
         axios.post(
-            '/battle',
+            '/battle/create',
             dataToSend,
         ).then(function (response) {
             if (response.data.status === true) {
