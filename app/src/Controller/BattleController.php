@@ -19,7 +19,7 @@ class BattleController extends AbstractController
     {
         if (!$this->getUser())
             return $this->redirectToRoute('app_login');
-        
+
         return sizeof($request->query) === 2 ? $this->render('/battle/battle.html.twig') : $this->redirectToRoute('app_home');
 
     }
@@ -29,11 +29,14 @@ class BattleController extends AbstractController
     {
         $requestParameters = $request->request;
 
+        $battleState = '{"hostBoard":{"boats":{}},"guestBoard":{"boats":{}},"hits":{"host":{"coordinates":[]},"guest":{"coordinates":[]}}}';
+
         $battle = new Battle();
         $battle->setNrShips($requestParameters->get('ships'));
         $battle->setNrShots($requestParameters->get('shots'));
         $battle->setUser1($this->getUser());
         $battle->setPassword($service->matchPassword());
+        $battle->setBattleState($battleState);
 
         try {
             $entityManager->persist($battle);

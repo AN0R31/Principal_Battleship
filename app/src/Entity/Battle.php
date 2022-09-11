@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\BattleRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BattleRepository::class)]
@@ -48,6 +49,9 @@ class Battle
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'battle')]
     #[ORM\JoinColumn(name: 'winner_id', referencedColumnName: 'id', nullable: false)]
     private ?User $winner = null;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $battle_state = null;
 
     public function getId(): ?int
     {
@@ -188,6 +192,18 @@ class Battle
     public function setWinner(?User $winner): void
     {
         $this->winner = $winner;
+    }
+
+    public function getBattleState(): ?string
+    {
+        return $this->battle_state;
+    }
+
+    public function setBattleState(string $battle_state): self
+    {
+        $this->battle_state = $battle_state;
+
+        return $this;
     }
 
 }
