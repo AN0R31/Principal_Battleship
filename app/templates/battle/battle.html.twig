@@ -12,4 +12,31 @@
     <h1>BATTLE</h1>
 
     <h3>user1 VS user2</h3>
+    {% set boatSizes = [2, 3, 4] %}
+    {% for i in  1..nrShips %}
+        <div style="display: flex" data-size="{{ boatSizes[i-1] }}" data-position="{{ i%2 }}">
+            {% for j in 1..boatSizes[i-1] %}
+                <div class="ship"
+                     style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">{{ i }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+    <div id="send"
+         style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">
+        Send
+    </div>
+
+    <div>
+        {% for i in 0..9 %}
+            <ul style="display: flex;list-style: none;margin: 0; justify-content: center">
+                {% for j in 0..9 %}
+                    <li id="{{ "#{i}#{j}" }}" class="cell"
+                        style="width: 50px;height: 50px;display: flex;justify-content: center;align-items: center;border: 1px solid black">
+                        0
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </div>
 {% endblock %}
