@@ -32,6 +32,7 @@ class BattleController extends AbstractController
             $status = 'Waiting for opponent...';
         } else {
             $status = true;
+
             $user2Email = $battle->getUser2()->getEmail();
             $user1Email = $battle->getUser1()->getEmail();
         }
