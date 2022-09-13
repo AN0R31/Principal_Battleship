@@ -89,8 +89,8 @@ class BattleController extends AbstractController
         return new JsonResponse(['status' => false, 'message' => 'Something went wrong. Try Again!']);
     }
 
-    #[Route('/battle/load', name: 'join_battle', methods: ['post'])]
-    public function load(Request $request, EntityManagerInterface $entityManager)
+    #[Route('/battle/load', name: 'load_battle', methods: ['post'])]
+    public function load(Request $request, EntityManagerInterface $entityManager): Response
     {
         $requestParameters = $request->request;
 
