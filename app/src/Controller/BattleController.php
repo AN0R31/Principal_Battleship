@@ -15,12 +15,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class BattleController extends AbstractController
 {
     #[Route('/battle', name: 'show_battle')]
-    public function showBattle(Request $request): Response
+    public function showBattle(Request $request, EntityManagerInterface $entityManager): Response
     {
         if (!$this->getUser())
             return $this->redirectToRoute('app_login');
 
-        return sizeof($request->query) === 2 ? $this->render('/battle/battle.html.twig') : $this->redirectToRoute('app_home');
+        $battle = $entityManager->getRepository(Battle::class)->findOneBy(['id' => $request->query->get('battle_id')]);
+
+        $nrShips = $battle->getNrShips();
+        $nrShots = $battle->getNrShots();
+
+        return sizeof($request->query) === 2 ? $this->render('/battle/battle.html.twig', ['nrShips' => $nrShips, 'nrShots' => $nrShots]) : $this->redirectToRoute('app_home');
 
     }
 
@@ -84,4 +89,36 @@ class BattleController extends AbstractController
         return new JsonResponse(['status' => false, 'message' => 'Something went wrong. Try Again!']);
     }
 
+    #[Route('/battle/load', name: 'join_battle', methods: ['post'])]
+    public function load(Request $request, EntityManagerInterface $entityManager)
+    {
+        $requestParameters = $request->request;
+
+        $nr = sizeof($requestParameters);
+
+        $battle = $entityManager->getRepository(Battle::class)->findOneBy([
+            "user1_id" => $this->getUser(),
+            "winner_id" => null,
+        ]);
+
+        $battleState = $battle->getBattleState();
+
+        $battleState = json_decode($battleState);
+
+        foreach ($requestParameters as $key => $value) {
+            $arrayOfXY = explode("_", $key);
+            $battleState->hostBoard->boats->{$nr} = new \stdClass();
+            $battleState->hostBoard->boats->{$nr}->coordinates = new \stdClass();
+            $battleState->hostBoard->boats->{$nr}->coordinates->posX = $arrayOfXY[1];
+            $battleState->hostBoard->boats->{$nr}->coordinates->posY = $arrayOfXY[0];
+            $nr--;
+        }
+
+        $battleState = json_encode($battleState);
+        $battle->setBattleState($battleState);
+        $entityManager->persist($battle);
+        $entityManager->flush();
+
+        return new JsonResponse(['status' => true]);
+    }
 }
