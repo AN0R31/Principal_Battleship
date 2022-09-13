@@ -25,7 +25,19 @@ class BattleController extends AbstractController
         $nrShips = $battle->getNrShips();
         $nrShots = $battle->getNrShots();
 
-        return sizeof($request->query) === 2 ? $this->render('/battle/battle.html.twig', ['nrShips' => $nrShips, 'nrShots' => $nrShots]) : $this->redirectToRoute('app_home');
+        $user2Email = null;
+        $user1Email = null;
+
+        if ($battle->getUser2() === null) {
+            $status = 'Waiting for opponent...';
+        } else {
+            $status = true;
+
+            $user2Email = $battle->getUser2()->getEmail();
+            $user1Email = $battle->getUser1()->getEmail();
+        }
+
+        return sizeof($request->query) === 2 ? $this->render('/battle/battle.html.twig', ['nrShips' => $nrShips, 'nrShots' => $nrShots, 'user1Email' => $user1Email, 'user2Email' => $user2Email, 'status' => $status]) : $this->redirectToRoute('app_home');
 
     }
 
