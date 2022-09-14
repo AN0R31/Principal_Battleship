@@ -20,11 +20,12 @@
     {% endif %}
     {% set boatSizes = [2, 3, 4] %}
     {% for i in  1..nrShips %}
-        <div style="display: flex" data-size="{{ boatSizes[i-1] }}" data-position="{{ i%2 }}">
+        <div style="display: flex" data-size="{{ boatSizes[i-1] }}" data-position="{{ -1 }}">
             {% for j in 1..boatSizes[i-1] %}
                 <div class="ship"
                      style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">{{ i }}</div>
             {% endfor %}
+            <input type="checkbox" id="vertical" name="vertical" value="{{ 0 }}">
         </div>
     {% endfor %}
 
