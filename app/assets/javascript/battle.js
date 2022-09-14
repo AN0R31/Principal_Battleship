@@ -22,9 +22,20 @@ function placeBoatOnBoard(coordinates) {
     boatPosition = boatPosition.map(item => item.join(""));
 
     for (let i = 0; i < boatSize; i++) {
+
         let tableCell = document.getElementById(boatPosition[i]);
-        tableCell.innerText = boatNumber;
+
+        if (tableCell && tableCell.innerText === '0' && !placedBoats[boatNumber]) {
+            tableCell.innerText = boatNumber;
+        } else {
+            for (let j = i - 1; j >= 0; j--) {
+                tableCell = document.getElementById(boatPosition[j]);
+                tableCell.innerText = '0';
+            }
+            return 0;
+        }
     }
+    return 1;
 }
 
 let boatNumber = null;
@@ -35,14 +46,13 @@ for (let li of document.getElementsByClassName("cell")) {
         if (boatNumber) {
             let coordinates = this.getAttribute("id").split("");
 
-            placeBoatOnBoard(coordinates);
-
-            placedBoats[`${boatNumber}`] = {
-                'coordinates': coordinates.join("_"),
-                'health': boat.getAttribute('data-size'),
-                'vertical': boat.getAttribute('data-position')
+            if (placeBoatOnBoard(coordinates)) {
+                placedBoats[`${boatNumber}`] = {
+                    'coordinates': coordinates.join("_"),
+                    'health': boat.getAttribute('data-size'),
+                    'vertical': boat.getAttribute('data-position')
+                }
             }
-
         }
     });
 }
@@ -64,3 +74,12 @@ document.getElementById("send").addEventListener('click', function () {
     axios.post('/battle/load', dataToSend).then(r => console.log(r.data))
     // }
 })
+
+document.getElementById("reset-board").addEventListener('click', function () {
+    boatNumber = null;
+    boat = null;
+    placedBoats = {};
+    for (let li of document.getElementsByClassName("cell")) {
+        li.innerText = '0';
+    }
+});
