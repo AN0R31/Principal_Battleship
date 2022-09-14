@@ -12,7 +12,6 @@
 
     <h1>BATTLE</h1>
 
-    {% dump %}
     {% if status is same as(true) %}
         <h3>{{ user1Username }} VS {{ user2Username }}</h3>
     {% else %}
@@ -29,9 +28,15 @@
         </div>
     {% endfor %}
 
-    <div id="send"
-         style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">
-        Send
+    <div style="display: flex">
+        <div id="send"
+             style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">
+            Send
+        </div>
+        <div id="reset-board"
+             style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">
+            Reset
+        </div>
     </div>
 
     <div>
