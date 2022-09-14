@@ -120,6 +120,8 @@ class BattleController extends AbstractController
             $arrayOfXY = explode("_", $key);
             $battleState->hostBoard->boats->{$nr} = new \stdClass();
             $battleState->hostBoard->boats->{$nr}->coordinates = new \stdClass();
+            $battleState->hostBoard->boats->{$nr}->health = explode(',', $value)[1];
+            $battleState->hostBoard->boats->{$nr}->vertical = filter_var(explode(',', $value)[2], FILTER_VALIDATE_BOOLEAN);
             $battleState->hostBoard->boats->{$nr}->coordinates->posX = $arrayOfXY[1];
             $battleState->hostBoard->boats->{$nr}->coordinates->posY = $arrayOfXY[0];
             $nr--;
