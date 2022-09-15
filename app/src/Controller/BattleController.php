@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Battle;
-use App\Service\CreateMatchServiceProvider;
-use App\Service\JoinBattleServiceProvider;
+use App\Service\CreateMatchService;
+use App\Service\JoinBattleService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -41,7 +41,7 @@ class BattleController extends AbstractController
     }
 
     #[Route('/battle/create', name: 'create_battle', methods: ['post'])]
-    public function createBattle(Request $request, CreateMatchServiceProvider $service, EntityManagerInterface $entityManager): Response
+    public function createBattle(Request $request, CreateMatchService $service, EntityManagerInterface $entityManager): Response
     {
         $requestParameters = $request->request;
 
@@ -71,7 +71,7 @@ class BattleController extends AbstractController
     }
 
     #[Route('/battle/join', name: 'join_battle', methods: ['post'])]
-    public function joinBattle(Request $request, EntityManagerInterface $entityManager, JoinBattleServiceProvider $service): Response
+    public function joinBattle(Request $request, EntityManagerInterface $entityManager, JoinBattleService $service): Response
     {
         $givenPassword = $request->request->get('password');
         $battle = $entityManager->getRepository(Battle::class)->findOneBy(['password' => $givenPassword]);

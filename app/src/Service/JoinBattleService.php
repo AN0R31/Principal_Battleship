@@ -5,7 +5,7 @@ namespace App\Service;
 use App\Entity\User;
 use Symfony\Component\Security\Core\Security;
 
-class JoinBattleServiceProvider
+class JoinBattleService
 {
     public function __construct(protected Security $security)
     {
