@@ -51,7 +51,7 @@ function doesGivenBoatOverlapTheOthers(boat, cellId) {
     return false
 }
 
-let cells = document.querySelectorAll('li')
+let cells = document.querySelectorAll('.cell')
 
 for (let cell of cells) {
     cell.addEventListener("dragover", (event) => {
@@ -120,3 +120,53 @@ document.getElementById("reset-board").addEventListener('click', function () {
         child.classList.add('boat-to-select')
     }
 });
+
+// send hits to backend
+let opponentCells = document.querySelectorAll(".cells");
+
+for (let cell of opponentCells) {
+    cell.addEventListener('click', function () {
+        if (!cell.getAttribute('data-hit')) {
+            cell.style.backgroundColor = 'red';
+            cell.setAttribute('data-hit', "true");
+
+            const dataToSend = new FormData;
+            dataToSend.set('hit', cell.getAttribute('id'))
+
+            axios.post("/battle/hit", dataToSend).then(r => console.log(r.data))
+        }
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
