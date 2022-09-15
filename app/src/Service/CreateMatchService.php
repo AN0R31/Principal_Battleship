@@ -4,7 +4,7 @@ namespace App\Service;
 
 use Symfony\Component\Security\Core\Security;
 
-class CreateMatchServiceProvider
+class CreateMatchService
 {
     public function __construct(protected Security $security)
     {
@@ -14,10 +14,7 @@ class CreateMatchServiceProvider
     {
         $userId = $this->security->getUser()->getId();
 
-        try {
-            return random_int(10000000, 100000000) . $userId;
-        } catch (\Exception $e) {
-            return 12233120 . $userId;
-        }
+            return hrtime(true) . $userId;
+
     }
 }

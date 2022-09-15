@@ -13,7 +13,7 @@ let boats = document.querySelectorAll('.boats')
 
 for (let boat of boats) {
     boat.addEventListener("dragstart", (event) => {
-        event.dataTransfer.setDragImage(document.getElementById(boat.getAttribute('id')),0,25);
+        event.dataTransfer.setDragImage(document.getElementById(boat.getAttribute('id')), 0, 25);
         // store a ref. on the dragged elem
         dragged = event.target;
     });
@@ -25,7 +25,7 @@ function doesGivenBoatFitOnGrid(boat, cellId) {
     let cellX = cellId[1]
     let cellY = cellId[0]
 
-    if (10-cellX<boatSize) {
+    if (10 - cellX < boatSize) {
         return false
     }
     return true
@@ -38,8 +38,8 @@ function doesGivenBoatOverlapTheOthers(boat, cellId) {
     let cellX = cellId[1]
     let cellY = cellId[0]
 
-    for (let x=0; x<boatSize; x++) {
-        let cellId = cellY+(Number(cellX)+x)
+    for (let x = 0; x < boatSize; x++) {
+        let cellId = cellY + (Number(cellX) + x)
 
         console.log(cellId)
 
@@ -68,8 +68,8 @@ for (let cell of cells) {
                 dragged.parentElement.classList.remove('boat-to-select')
 
                 console.log(cell.getAttribute('id')[1], dragged.getAttribute('data-size'))
-                for (let i=0; i<dragged.getAttribute('data-size');i++) {
-                    let cellId = cell.getAttribute('id')[0]+(Number(cell.getAttribute('id')[1])+i)
+                for (let i = 0; i < dragged.getAttribute('data-size'); i++) {
+                    let cellId = cell.getAttribute('id')[0] + (Number(cell.getAttribute('id')[1]) + i)
 
                     document.getElementById(cellId).innerHTML = dragged.getAttribute('id')[5]
                     document.getElementById(cellId).style.backgroundColor = 'black'
