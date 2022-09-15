@@ -12,43 +12,48 @@
 
     <h1>BATTLE</h1>
 
+    {% set boatSizes = [2, 3, 4] %}
+    <div id="boats" style="position: absolute; margin: 0 0">
+        {% for i in  1..nrShips %}
+            <div class="boat-to-select" style="display: flex">
+                <div id="boat_{{ i }}" draggable="true" class="boats" style="display: flex; width: fit-content;"
+                     data-size="{{ boatSizes[i-1] }}"
+                     data-position="{{ -1 }}">
+                    {% for j in 1..boatSizes[i-1] %}
+                        <div class="ship"
+                             style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">{{ i }}</div>
+                    {% endfor %}
+                </div>
+                <input type="checkbox" id="vertical" name="vertical" value="{{ 0 }}">
+            </div>
+        {% endfor %}
+        <div id="send-or-reset" style="display: flex">
+            <div id="send"
+                 style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">
+                Send
+            </div>
+            <div id="reset-board"
+                 style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">
+                Reset
+            </div>
+        </div>
+    </div>
+
     {% if status is same as(true) %}
         <h3>{{ user1Username }} VS {{ user2Username }}</h3>
     {% else %}
         <h3>{{ status }}</h3>
     {% endif %}
-    {% set boatSizes = [2, 3, 4] %}
-    {% for i in  1..nrShips %}
-        <div style="display: flex" data-size="{{ boatSizes[i-1] }}" data-position="{{ -1 }}">
-            {% for j in 1..boatSizes[i-1] %}
-                <div class="ship"
-                     style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">{{ i }}</div>
-            {% endfor %}
-            <input type="checkbox" id="vertical" name="vertical" value="{{ 0 }}">
-        </div>
-    {% endfor %}
-
-    <div style="display: flex">
-        <div id="send"
-             style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">
-            Send
-        </div>
-        <div id="reset-board"
-             style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">
-            Reset
-        </div>
-    </div>
 
     <div>
         {% for i in 0..9 %}
             <ul style="display: flex;list-style: none;margin: 0; justify-content: center">
                 {% for j in 0..9 %}
-                    <li id="{{ "#{i}#{j}" }}" class="cell"
-                        style="width: 50px;height: 50px;display: flex;justify-content: center;align-items: center;border: 1px solid black">
-                        0
-                    </li>
+                    <li id="{{ "#{i}#{j}" }}" class="cell" style="background-color: gray; width: 50px;height: 50px;display: flex;justify-content: center;align-items: center;border: 1px solid black"
+                    >0</li>
                 {% endfor %}
             </ul>
         {% endfor %}
     </div>
+
 {% endblock %}
