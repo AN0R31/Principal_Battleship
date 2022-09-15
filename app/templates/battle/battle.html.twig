@@ -16,7 +16,7 @@
     <div id="boats" style="position: absolute; margin: 0 0">
         {% for i in  1..nrShips %}
             <div class="boat-to-select" style="display: flex">
-                <div id="boat_{{ i }}" draggable="true" class="boats" style="display: flex; width: fit-content;"
+                <div id="boat_{{ i }}" data-rotation="0" draggable="true" class="boats" style="display: flex; width: fit-content;"
                      data-size="{{ boatSizes[i-1] }}"
                      data-position="{{ "false" }}">
                     {% for j in 1..boatSizes[i-1] %}
@@ -24,9 +24,10 @@
                              style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">{{ i }}</div>
                     {% endfor %}
                 </div>
-                <input type="checkbox" id="vertical" name="vertical" value="{{ 0 }}">
             </div>
         {% endfor %}
+        <label for="vertical">Vertical: </label>
+        <input type="checkbox" id="vertical" name="vertical" value="{{ 0 }}">
         <div id="send-or-reset" style="display: flex">
             <div id="send"
                  style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">
