@@ -45,7 +45,7 @@ class BattleController extends AbstractController
     {
         $requestParameters = $request->request;
 
-        $battleState = '{"hostBoard":{"boats":{}},"guestBoard":{"boats":{}},"hits":{"host":{"coordinates":[]},"guest":{"coordinates":[]}}}';
+        $battleState = '{"hostBoard":{"boats":{},"hitsTaken":{}},"guestBoard":{"boats":{},"hitsTaken":{}}}';
 
         $battle = new Battle();
         $battle->setNrShips($requestParameters->get('ships'));
@@ -108,7 +108,7 @@ class BattleController extends AbstractController
         $nr = sizeof($requestParameters);
 
         $battle = $entityManager->getRepository(Battle::class)->findOneBy([
-            "user1_id" => $this->getUser(),
+            //TODO: some unique identifier
             "winner_id" => null,
         ]);
 
@@ -116,14 +116,16 @@ class BattleController extends AbstractController
 
         $battleState = json_decode($battleState);
 
+        $board = $this->getUser()->getId() === $battle->getUser1()->getId() ? 'hostBoard' : 'guestBoard';
+
         foreach ($requestParameters as $value) {
             $params = explode(',', $value);
-            $battleState->hostBoard->boats->{$nr} = new \stdClass();
-            $battleState->hostBoard->boats->{$nr}->coordinates = new \stdClass();
-            $battleState->hostBoard->boats->{$nr}->health = $params[1];
-            $battleState->hostBoard->boats->{$nr}->vertical = filter_var($params[2], FILTER_VALIDATE_BOOLEAN);
-            $battleState->hostBoard->boats->{$nr}->coordinates->posX = str_split($params[0])[1];
-            $battleState->hostBoard->boats->{$nr}->coordinates->posY = str_split($params[0])[0];
+            $battleState->{$board}->boats->{$nr} = new \stdClass();
+            $battleState->{$board}->boats->{$nr}->coordinates = new \stdClass();
+            $battleState->{$board}->boats->{$nr}->health = $params[1];
+            $battleState->{$board}->boats->{$nr}->vertical = filter_var($params[2], FILTER_VALIDATE_BOOLEAN);
+            $battleState->{$board}->boats->{$nr}->coordinates->posX = str_split($params[0])[1];
+            $battleState->{$board}->boats->{$nr}->coordinates->posY = str_split($params[0])[0];
             $nr--;
         }
 
@@ -131,6 +133,35 @@ class BattleController extends AbstractController
         $battle->setBattleState($battleState);
         $entityManager->persist($battle);
         $entityManager->flush();
+
+        return new JsonResponse(['status' => true]);
+    }
+
+    #[Route('/battle/hit', name: 'hit', methods: ['post'])]
+    public function hit(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $coordinates = explode(" ", $request->request->get('hit'));
+
+        $battle = $entityManager->getRepository(Battle::class)->findOneBy([
+            //TODO: some unique identifier
+            "winner_id" => null,
+        ]);
+
+        $battleState = json_decode($battle->getBattleState());
+
+        $board = $this->getUser()->getId() === $battle->getUser1()->getId() ? 'guestBoard' : 'hostBoard';
+
+        $nrOfHits = count(get_object_vars($battleState->{$board}->hitsTaken)) + 1;
+
+        $battleState->{$board}->hitsTaken->{$nrOfHits} = new \stdClass();
+        $battleState->{$board}->hitsTaken->{$nrOfHits}->posX = $coordinates[1];
+        $battleState->{$board}->hitsTaken->{$nrOfHits}->posY = $coordinates[0];
+
+        $battleState = json_encode($battleState);
+        $battle->setBattleState($battleState);
+        $entityManager->persist($battle);
+        $entityManager->flush();
+
 
         return new JsonResponse(['status' => true]);
     }
