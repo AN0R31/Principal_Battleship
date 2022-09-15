@@ -116,14 +116,14 @@ class BattleController extends AbstractController
 
         $battleState = json_decode($battleState);
 
-        foreach ($requestParameters as $key => $value) {
-            $arrayOfXY = explode("_", $key);
+        foreach ($requestParameters as $value) {
+            $params = explode(',', $value);
             $battleState->hostBoard->boats->{$nr} = new \stdClass();
             $battleState->hostBoard->boats->{$nr}->coordinates = new \stdClass();
-            $battleState->hostBoard->boats->{$nr}->health = explode(',', $value)[1];
-            $battleState->hostBoard->boats->{$nr}->vertical = filter_var(explode(',', $value)[2], FILTER_VALIDATE_BOOLEAN);
-            $battleState->hostBoard->boats->{$nr}->coordinates->posX = $arrayOfXY[1];
-            $battleState->hostBoard->boats->{$nr}->coordinates->posY = $arrayOfXY[0];
+            $battleState->hostBoard->boats->{$nr}->health = $params[1];
+            $battleState->hostBoard->boats->{$nr}->vertical = filter_var($params[2], FILTER_VALIDATE_BOOLEAN);
+            $battleState->hostBoard->boats->{$nr}->coordinates->posX = str_split($params[0])[1];
+            $battleState->hostBoard->boats->{$nr}->coordinates->posY = str_split($params[0])[0];
             $nr--;
         }
 
