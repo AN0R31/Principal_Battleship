@@ -13,42 +13,69 @@ let boats = document.querySelectorAll('.boats')
 
 for (let boat of boats) {
     boat.addEventListener("dragstart", (event) => {
-        event.dataTransfer.setDragImage(document.getElementById(boat.getAttribute('id')), 0, 25);
-        // store a ref. on the dragged elem
+        if (document.getElementById('vertical').checked) {
+            document.getElementById(boat.getAttribute('id')).style.display = 'block'
+            boat.setAttribute('data-rotation', "1")
+        } else {
+            document.getElementById(boat.getAttribute('id')).style.display = 'flex'
+            boat.setAttribute('data-rotation', "0")
+        }
+        event.dataTransfer.setDragImage(document.getElementById(boat.getAttribute('id')), 25, 25);
         dragged = event.target;
     });
 }
 
-function doesGivenBoatFitOnGrid(boat, cellId) {
+function doesGivenBoatFitOnGrid(boat, cellId, rotation) {
     let boatSize = boat.getAttribute('data-size')
 
     let cellX = cellId[1]
     let cellY = cellId[0]
 
-    if (10 - cellX < boatSize) {
-        return false
+    if (rotation === 0) {
+        if (10 - cellX < boatSize) {
+            return false
+        }
+        return true
+    } else if (rotation === 1) {
+        if (10 - cellY < boatSize) {
+            return false
+        }
+        return true
     }
-    return true
 }
 
-function doesGivenBoatOverlapTheOthers(boat, cellId) {
+function doesGivenBoatOverlapTheOthers(boat, cellId, rotation) {
     console.log(boat)
     let boatSize = boat.getAttribute('data-size')
 
     let cellX = cellId[1]
     let cellY = cellId[0]
 
-    for (let x = 0; x < boatSize; x++) {
-        let cellId = cellY + (Number(cellX) + x)
+    if (rotation === 0) {
+        for (let x = 0; x < boatSize; x++) {
+            let cellId = cellY + (Number(cellX) + x)
 
-        console.log(cellId)
+            console.log(cellId)
 
-        if (document.getElementById(cellId).innerHTML !== '0') {
-            console.log(cellId, typeof document.getElementById(cellId).innerHTML, document.getElementById(cellId).innerHTML, typeof '0', '0')
-            return true
+            if (document.getElementById(cellId).innerHTML !== '0') {
+                console.log(cellId, typeof document.getElementById(cellId).innerHTML, document.getElementById(cellId).innerHTML, typeof '0', '0')
+                return true
+            }
         }
+        return false
+    } else if (rotation === 1) {
+        for (let y = 0; y < boatSize; y++) {
+            let cellId = (Number(cellY) + y) + cellX
+
+            console.log(cellId)
+
+            if (document.getElementById(cellId).innerHTML !== '0') {
+                console.log(cellId, typeof document.getElementById(cellId).innerHTML, document.getElementById(cellId).innerHTML, typeof '0', '0')
+                return true
+            }
+        }
+        return false
     }
-    return false
 }
 
 let cells = document.querySelectorAll('.cell')
@@ -62,30 +89,53 @@ for (let cell of cells) {
         // prevent default action (open as link for some elements)
         event.preventDefault();
         // move dragged element to the selected drop target
-        if (doesGivenBoatFitOnGrid(dragged, cell.getAttribute('id'))) {
-            if (!doesGivenBoatOverlapTheOthers(dragged, cell.getAttribute('id'))) {
+        if (doesGivenBoatFitOnGrid(dragged, cell.getAttribute('id'), Number(dragged.getAttribute('data-rotation')))) {
+            if (!doesGivenBoatOverlapTheOthers(dragged, cell.getAttribute('id'), Number(dragged.getAttribute('data-rotation')))) {
                 dragged.parentElement.style.display = 'none'
                 dragged.parentElement.classList.remove('boat-to-select')
 
-                for (let i = 0; i < dragged.getAttribute('data-size'); i++) {
-                    let cellId = cell.getAttribute('id')[0] + (Number(cell.getAttribute('id')[1]) + i)
+                if (Number(dragged.getAttribute('data-rotation')) === 0) {
+                    for (let i = 0; i < dragged.getAttribute('data-size'); i++) {
+                        let cellId = cell.getAttribute('id')[0] + (Number(cell.getAttribute('id')[1]) + i)
 
-                    document.getElementById(cellId).innerHTML = dragged.getAttribute('id')[5]
-                    document.getElementById(cellId).style.backgroundColor = 'black'
-                    document.getElementById(cellId).style.color = 'white'
-                }
-                let startingCellOfBoat = cell.getAttribute('id')[0] + (Number(cell.getAttribute('id')[1]))
+                        document.getElementById(cellId).innerHTML = dragged.getAttribute('id')[5]
+                        document.getElementById(cellId).style.backgroundColor = 'black'
+                        document.getElementById(cellId).style.color = 'white'
+                    }
+                    let startingCellOfBoat = cell.getAttribute('id')[0] + (Number(cell.getAttribute('id')[1]))
 
-                placedBoats[`${startingCellOfBoat}`] = {
-                    'coordinates': dragged.getAttribute('id'),
-                    'health': dragged.getAttribute('data-size'),
-                    'vertical': dragged.getAttribute('data-position')
+                    placedBoats[`${startingCellOfBoat}`] = {
+                        'coordinates': dragged.getAttribute('id'),
+                        'health': dragged.getAttribute('data-size'),
+                        'vertical': dragged.getAttribute('data-position')
+                    }
+
+                    let remainingBoatsToSelect = document.getElementsByClassName('boat-to-select')
+                    if (remainingBoatsToSelect.item(0) === null) {
+                        customAlertSuccess('All ships are now placed on the board!')
+                    }
+                } else if (Number(dragged.getAttribute('data-rotation')) === 1) { ///////
+                    for (let i = 0; i < dragged.getAttribute('data-size'); i++) {
+                        let cellId = (Number(cell.getAttribute('id')[0]) + i) + cell.getAttribute('id')[1]
+
+                        document.getElementById(cellId).innerHTML = dragged.getAttribute('id')[5]
+                        document.getElementById(cellId).style.backgroundColor = 'black'
+                        document.getElementById(cellId).style.color = 'white'
+                    }
+                    let startingCellOfBoat = (Number(cell.getAttribute('id')[0])) + cell.getAttribute('id')[1]
+
+                    placedBoats[`${startingCellOfBoat}`] = {
+                        'coordinates': dragged.getAttribute('id'),
+                        'health': dragged.getAttribute('data-size'),
+                        'vertical': dragged.getAttribute('data-position')
+                    }
+
+                    let remainingBoatsToSelect = document.getElementsByClassName('boat-to-select')
+                    if (remainingBoatsToSelect.item(0) === null) {
+                        customAlertSuccess('All ships are now placed on the board!')
+                    }
                 }
 
-                let remainingBoatsToSelect = document.getElementsByClassName('boat-to-select')
-                if (remainingBoatsToSelect.item(0) === null) {
-                    customAlertSuccess('All ships are now placed on the board!')
-                }
             } else {
                 customAlertError('You cannot place boats on top of each other!')
             }
