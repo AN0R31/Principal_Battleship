@@ -67,13 +67,19 @@ for (let cell of cells) {
                 dragged.parentElement.style.display = 'none'
                 dragged.parentElement.classList.remove('boat-to-select')
 
-                console.log(cell.getAttribute('id')[1], dragged.getAttribute('data-size'))
                 for (let i = 0; i < dragged.getAttribute('data-size'); i++) {
                     let cellId = cell.getAttribute('id')[0] + (Number(cell.getAttribute('id')[1]) + i)
 
                     document.getElementById(cellId).innerHTML = dragged.getAttribute('id')[5]
                     document.getElementById(cellId).style.backgroundColor = 'black'
                     document.getElementById(cellId).style.color = 'white'
+                }
+                let startingCellOfBoat = cell.getAttribute('id')[0] + (Number(cell.getAttribute('id')[1]))
+
+                placedBoats[`${startingCellOfBoat}`] = {
+                    'coordinates': dragged.getAttribute('id'),
+                    'health': dragged.getAttribute('data-size'),
+                    'vertical': dragged.getAttribute('data-position')
                 }
 
                 let remainingBoatsToSelect = document.getElementsByClassName('boat-to-select')
@@ -89,63 +95,7 @@ for (let cell of cells) {
     });
 }
 
-function placeBoatOnBoard(coordinates) {
-    let boatPosition = [coordinates.map(item => parseInt(item))];
-    let boatSize = boat.getAttribute("data-size");
-    let vertical = boat.children;
-    vertical = vertical[vertical.length - 1].checked
-    let deltaX = vertical === true ? 1 : 0;
-    let deltaY = vertical === true ? 0 : 1;
-
-    for (let i = 1; i < boatSize; i++) {
-        boatPosition.push([boatPosition[0][0] + i * deltaX, boatPosition[0][1] + i * deltaY]);
-    }
-
-    boat.setAttribute("data-position", vertical);
-    boatPosition = boatPosition.map(item => item.join(""));
-
-    for (let i = 0; i < boatSize; i++) {
-
-        let tableCell = document.getElementById(boatPosition[i]);
-
-        if (tableCell && tableCell.innerText === '0' && !placedBoats[boatNumber]) {
-            tableCell.innerText = boatNumber;
-        } else {
-            for (let j = i - 1; j >= 0; j--) {
-                tableCell = document.getElementById(boatPosition[j]);
-                tableCell.innerText = '0';
-            }
-            return 0;
-        }
-    }
-    return 1;
-}
-
-let boatNumber = null;
-let boat = null;
 let placedBoats = {};
-for (let li of document.getElementsByClassName("cell")) {
-    li.addEventListener("click", function () {
-        if (boatNumber) {
-            let coordinates = this.getAttribute("id").split("");
-
-            if (placeBoatOnBoard(coordinates)) {
-                placedBoats[`${boatNumber}`] = {
-                    'coordinates': coordinates.join("_"),
-                    'health': boat.getAttribute('data-size'),
-                    'vertical': boat.getAttribute('data-position')
-                }
-            }
-        }
-    });
-}
-
-for (let ship of document.getElementsByClassName("ship")) {
-    ship.addEventListener("click", function () {
-        boatNumber = this.innerText;
-        boat = this.parentElement;
-    })
-}
 
 document.getElementById("send").addEventListener('click', function () {
     // if (Object.keys(boatCoordinates).length === 3) {
@@ -159,8 +109,6 @@ document.getElementById("send").addEventListener('click', function () {
 })
 
 document.getElementById("reset-board").addEventListener('click', function () {
-    boatNumber = null;
-    boat = null;
     placedBoats = {};
     for (let li of document.getElementsByClassName("cell")) {
         li.innerText = '0';
