@@ -6,6 +6,7 @@ use App\Entity\Battle;
 use App\Service\CreateMatchService;
 use App\Service\JoinBattleService;
 use Doctrine\ORM\EntityManagerInterface;
+use Pusher\Pusher;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,7 +37,7 @@ class BattleController extends AbstractController
             $user1Username = $battle->getUser1()->getUsername();
         }
 
-        return sizeof($request->query) === 2 ? $this->render('/battle/battle.html.twig', ['nrShips' => $nrShips, 'nrShots' => $nrShots, 'user1Username' => $user1Username, 'user2Username' => $user2Username, 'status' => $status]) : $this->redirectToRoute('app_home');
+        return sizeof($request->query) === 2 ? $this->render('/battle/battle.html.twig', ['battle_id' => $request->query->get('battle_id'),'nrShips' => $nrShips, 'nrShots' => $nrShots, 'user1Username' => $user1Username, 'user2Username' => $user2Username, 'status' => $status]) : $this->redirectToRoute('app_home');
 
     }
 
@@ -138,7 +139,7 @@ class BattleController extends AbstractController
     }
 
     #[Route('/battle/hit', name: 'hit', methods: ['post'])]
-    public function hit(Request $request, EntityManagerInterface $entityManager): Response
+    public function hit(Pusher $pusher, Request $request, EntityManagerInterface $entityManager): Response
     {
         $coordinates = explode(" ", $request->request->get('hit'));
 
@@ -162,7 +163,7 @@ class BattleController extends AbstractController
         $entityManager->persist($battle);
         $entityManager->flush();
 
-
+        $pusher->trigger($request->request->get('channel'), 'new-greeting', []);
         return new JsonResponse(['status' => true]);
     }
 }
