@@ -1,5 +1,17 @@
 import axios from "axios";
 import {customAlertError, customAlertSuccess} from "./customAlerts";
+import Pusher from "pusher-js";
+
+///////////////////////////PUSHER///////////////////////////////////////
+let channelName = document.getElementById("test").innerText;
+var pusher = new Pusher('7cb53bc01cb5c9f74363', {
+    cluster: 'eu'
+});
+const channel = pusher.subscribe(channelName);
+channel.bind('new-greeting', function () {
+    alert('Hello!');
+});
+///////////////////////////////////////////////////////////////////////
 
 let homeButton = document.getElementById('button-home')
 
@@ -182,41 +194,8 @@ for (let cell of opponentCells) {
 
             const dataToSend = new FormData;
             dataToSend.set('hit', cell.getAttribute('id'))
-
-            axios.post("/battle/hit", dataToSend).then(r => console.log(r.data))
+            dataToSend.set('channel', channelName)
+            axios.post("/battle/hit", dataToSend).then(r => console.log(r.data.channel))
         }
     });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

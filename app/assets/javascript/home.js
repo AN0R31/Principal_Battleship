@@ -1,5 +1,4 @@
 import axios from "axios";
-
 import {customAlertError, customOneFieldForm} from "./customAlerts";
 
 let createMatchModal = document.getElementById('modal-create-match')
