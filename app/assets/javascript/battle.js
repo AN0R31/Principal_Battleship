@@ -47,9 +47,13 @@ channel.bind('join', function (params) {
 });
 
 channel.bind('declare_loser', function (params) {
+    console.log(params.isHostWinner, Number(isHost))
         if (params.isHostWinner === true && Number(isHost) === 1) {
             document.getElementById('vs').innerHTML = 'YOU WON!';
-        } else {
+        } else if (params.isHostWinner === false && Number(isHost) === 0) {
+            document.getElementById('vs').innerHTML = 'YOU WON!';
+        }
+        else {
             document.getElementById('vs').innerHTML = 'YOU LOST!';
         }
 });
