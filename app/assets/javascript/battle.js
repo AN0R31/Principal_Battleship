@@ -8,8 +8,9 @@ var pusher = new Pusher('7cb53bc01cb5c9f74363', {
     cluster: 'eu'
 });
 const channel = pusher.subscribe(channelName);
-channel.bind('new-greeting', function () {
-    alert('Hello!');
+channel.bind('new-greeting', function (params) {
+    alert(params.board +" "+ params.coordinates);
+    console.log(params)
 });
 ///////////////////////////////////////////////////////////////////////
 
