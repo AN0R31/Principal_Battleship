@@ -24,6 +24,10 @@ channel.bind('new-greeting', function (params) {
         hit(params.coordinates)
     }
 });
+
+channel.bind('join', function (params) {
+    document.getElementById('vs').innerHTML = params.user1Username + " VS " + params.user2Username;
+});
 ///////////////////////////////////////////////////////////////////////
 
 let homeButton = document.getElementById('button-home')
