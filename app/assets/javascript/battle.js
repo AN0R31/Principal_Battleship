@@ -2,6 +2,17 @@ import axios from "axios";
 import {customAlertError, customAlertSuccess} from "./customAlerts";
 import Pusher from "pusher-js";
 
+console.log(isHost)
+
+function hit(coordinates) {
+    let cellId = coordinates[0] + coordinates[1]
+
+    let targetCell = document.getElementById(cellId)
+
+    targetCell.style.backgroundColor = 'red';
+    targetCell.setAttribute('data-hit', "true");
+}
+
 ///////////////////////////PUSHER///////////////////////////////////////
 let channelName = document.getElementById("test").innerText;
 var pusher = new Pusher('7cb53bc01cb5c9f74363', {
@@ -9,8 +20,11 @@ var pusher = new Pusher('7cb53bc01cb5c9f74363', {
 });
 const channel = pusher.subscribe(channelName);
 channel.bind('new-greeting', function (params) {
-    alert(params.board +" "+ params.coordinates);
-    console.log(params)
+    if (Number(isHost) === 1 && params.board === 'hostBoard') {
+        hit(params.coordinates)
+    } else if (Number(isHost) === 0 && params.board === 'guestBoard') {
+        hit(params.coordinates)
+    }
 });
 ///////////////////////////////////////////////////////////////////////
 
