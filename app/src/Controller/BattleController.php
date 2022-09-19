@@ -37,7 +37,7 @@ class BattleController extends AbstractController
             $user1Username = $battle->getUser1()->getUsername();
         }
 
-        return sizeof($request->query) === 2 ? $this->render('/battle/battle.html.twig', ['battle_id' => $request->query->get('battle_id'),'nrShips' => $nrShips, 'nrShots' => $nrShots, 'user1Username' => $user1Username, 'user2Username' => $user2Username, 'status' => $status]) : $this->redirectToRoute('app_home');
+        return sizeof($request->query) === 2 ? $this->render('/battle/battle.html.twig', ['battle_id' => $request->query->get('battle_id'), 'isHost' => $this->getUser()->getId() === $battle->getUser1()->getId() ? 1:0 ,'nrShips' => $nrShips, 'nrShots' => $nrShots, 'user1Username' => $user1Username, 'user2Username' => $user2Username, 'status' => $status]) : $this->redirectToRoute('app_home');
 
     }
 
