@@ -37,7 +37,23 @@ class BattleController extends AbstractController
             $user1Username = $battle->getUser1()->getUsername();
         }
 
-        return sizeof($request->query) === 2 ? $this->render('/battle/battle.html.twig', ['battle_id' => $request->query->get('battle_id'), 'isHost' => $this->getUser()->getId() === $battle->getUser1()->getId() ? 1:0 ,'nrShips' => $nrShips, 'nrShots' => $nrShots, 'user1Username' => $user1Username, 'user2Username' => $user2Username, 'status' => $status]) : $this->redirectToRoute('app_home');
+        if ($nrShips === 3) {
+            $boatSizes = [2, 3, 5];
+        } else if ($nrShips === 5) {
+            $boatSizes = [2, 3, 3, 4, 5];
+        } else if ($nrShips === 7) {
+            $boatSizes = [2, 3, 3, 3, 4, 5, 5];
+        }
+
+        return sizeof($request->query) === 2 ? $this->render('/battle/battle.html.twig', [
+            'battle_id' => $request->query->get('battle_id'),
+            'isHost' => $this->getUser()->getId() === $battle->getUser1()->getId() ? 1:0,
+            'boatSizes' => $boatSizes,
+            'nrShips' => $nrShips,
+            'nrShots' => $nrShots,
+            'user1Username' => $user1Username,
+            'user2Username' => $user2Username,
+            'status' => $status]) : $this->redirectToRoute('app_home');
 
     }
 
@@ -106,11 +122,10 @@ class BattleController extends AbstractController
     {
         $requestParameters = $request->request;
 
-        $nr = sizeof($requestParameters);
+        $nr = sizeof($requestParameters)-1;
 
         $battle = $entityManager->getRepository(Battle::class)->findOneBy([
-            //TODO: some unique identifier
-            "winner_id" => null,
+            "id" => $request->request->get('battle_id'),
         ]);
 
         $battleState = $battle->getBattleState();
@@ -119,7 +134,11 @@ class BattleController extends AbstractController
 
         $board = $this->getUser()->getId() === $battle->getUser1()->getId() ? 'hostBoard' : 'guestBoard';
 
+        $iterationCounter = 0;
         foreach ($requestParameters as $value) {
+            if ($iterationCounter>$nr) {
+                break;
+            }
             $params = explode(',', $value);
             $battleState->{$board}->boats->{$nr} = new \stdClass();
             $battleState->{$board}->boats->{$nr}->coordinates = new \stdClass();
@@ -128,6 +147,7 @@ class BattleController extends AbstractController
             $battleState->{$board}->boats->{$nr}->coordinates->posX = str_split($params[0])[1];
             $battleState->{$board}->boats->{$nr}->coordinates->posY = str_split($params[0])[0];
             $nr--;
+            $iterationCounter++;
         }
 
         $battleState = json_encode($battleState);
@@ -144,8 +164,7 @@ class BattleController extends AbstractController
         $coordinates = explode(" ", $request->request->get('hit'));
 
         $battle = $entityManager->getRepository(Battle::class)->findOneBy([
-            //TODO: some unique identifier
-            "winner_id" => null,
+            "id" => $request->request->get('battle_id'),
         ]);
 
         $battleState = json_decode($battle->getBattleState());
