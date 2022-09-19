@@ -7,6 +7,15 @@ function hit(coordinates) {
 
     let targetCell = document.getElementById(cellId)
 
+    targetCell.style.backgroundColor = 'green';
+    targetCell.setAttribute('data-hit', "true");
+}
+
+function hitBoat(coordinates) {
+    let cellId = coordinates[0] + coordinates[1]
+
+    let targetCell = document.getElementById(cellId)
+
     targetCell.style.backgroundColor = 'red';
     targetCell.setAttribute('data-hit', "true");
 }
@@ -19,14 +28,30 @@ var pusher = new Pusher('7cb53bc01cb5c9f74363', {
 const channel = pusher.subscribe(channelName);
 channel.bind('new-greeting', function (params) {
     if (Number(isHost) === 1 && params.board === 'hostBoard') {
-        hit(params.coordinates)
+        if (params.isHit === true) {
+            hitBoat(params.coordinates)
+        } else {
+            hit(params.coordinates)
+        }
     } else if (Number(isHost) === 0 && params.board === 'guestBoard') {
-        hit(params.coordinates)
+        if (params.isHit === true) {
+            hitBoat(params.coordinates)
+        } else {
+            hit(params.coordinates)
+        }
     }
 });
 
 channel.bind('join', function (params) {
     document.getElementById('vs').innerHTML = params.user1Username + " VS " + params.user2Username;
+});
+
+channel.bind('declare_loser', function (params) {
+        if (params.isHostWinner === true && Number(isHost) === 1) {
+            document.getElementById('vs').innerHTML = 'YOU WON!';
+        } else {
+            document.getElementById('vs').innerHTML = 'YOU LOST!';
+        }
 });
 ///////////////////////////////////////////////////////////////////////
 
@@ -202,14 +227,32 @@ let opponentCells = document.querySelectorAll(".cells");
 for (let cell of opponentCells) {
     cell.addEventListener('click', function () {
         if (!cell.getAttribute('data-hit')) {
-            cell.style.backgroundColor = 'red';
             cell.setAttribute('data-hit', "true");
 
             const dataToSend = new FormData;
             dataToSend.set('hit', cell.getAttribute('id'))
             dataToSend.set('channel', channelName)
             dataToSend.set('battle_id', battle_id)
-            axios.post("/battle/hit", dataToSend).then()
+            axios.post("/battle/hit", dataToSend).then(function (response) {
+                if (response.data.isHit === true) {
+                    cell.style.backgroundColor = 'green'
+                } else {
+                    cell.style.backgroundColor = 'red'
+                }
+
+                if (response.data.allBoatsAreDestroyed === true) {
+                    document.getElementById('vs').innerHTML = 'YOU WON!'
+
+                    const dataToSendToEnd = new FormData;
+                    dataToSendToEnd.set('battle_id', battle_id)
+                    dataToSendToEnd.set('channel', channelName)
+                    axios.post("/battle/end", dataToSendToEnd)
+                    //     .then(function (response) {
+                    // });
+                }
+
+            });
+
         }
-    });
+    })
 }

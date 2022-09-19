@@ -142,6 +142,7 @@ class BattleController extends AbstractController
                 $battleState->{$board}->boats->{$nr} = new \stdClass();
                 $battleState->{$board}->boats->{$nr}->coordinates = new \stdClass();
                 $battleState->{$board}->boats->{$nr}->health = $params[1];
+                $battleState->{$board}->boats->{$nr}->size = $params[1];
                 $battleState->{$board}->boats->{$nr}->vertical = filter_var($params[2], FILTER_VALIDATE_BOOLEAN);
                 $battleState->{$board}->boats->{$nr}->coordinates->posX = str_split($params[0])[1];
                 $battleState->{$board}->boats->{$nr}->coordinates->posY = str_split($params[0])[0];
@@ -176,12 +177,60 @@ class BattleController extends AbstractController
         $battleState->{$board}->hitsTaken->{$nrOfHits}->posX = $coordinates[1];
         $battleState->{$board}->hitsTaken->{$nrOfHits}->posY = $coordinates[0];
 
+        $isHit = false;
+        $allBoatsAreDestroyed = true;
+
+        foreach ($battleState->{$board}->boats as $boat) {
+            if ($coordinates[1] === $boat->coordinates->posX && $boat->vertical === true) {
+                for ($posY = intval($boat->coordinates->posY); $posY < $boat->coordinates->posY + $boat->size; $posY++) {
+                    if (intval($coordinates[0]) === $posY) {
+                        $isHit = true;
+
+                        $boat->health = intval($boat->health) - 1;
+                        //break;
+                    }
+                }
+            }
+
+            if ($coordinates[0] === $boat->coordinates->posY && $boat->vertical === false) {
+                for ($posX = intval($boat->coordinates->posX); $posX < $boat->coordinates->posX + $boat->size; $posX++) {
+                    if (intval($coordinates[1]) === $posX) {
+                        $isHit = true;
+
+                        $boat->health = intval($boat->health) - 1;
+                        //break;
+                    }
+                }
+            }
+
+            if (intval($boat->health) > 0) {
+                $allBoatsAreDestroyed = false;
+            }
+        }
+
+        $battleState->{$board}->hitsTaken->{$nrOfHits}->isHit = $isHit;
+
         $battleState = json_encode($battleState);
         $battle->setBattleState($battleState);
         $entityManager->persist($battle);
         $entityManager->flush();
 
-        $pusher->trigger($request->request->get('channel'), 'new-greeting', ['board' => $board, 'coordinates' => $coordinates]);
+        $pusher->trigger($request->request->get('channel'), 'new-greeting', ['board' => $board, 'coordinates' => $coordinates, 'isHit' => $isHit]);
+        return new JsonResponse(['status' => true, 'isHit' => $isHit, 'allBoatsAreDestroyed' => $allBoatsAreDestroyed]);
+    }
+
+    #[Route('/battle/end', name: 'end', methods: ['post'])]
+    public function end(Pusher $pusher, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $battle = $entityManager->getRepository(Battle::class)->findOneBy([
+            "id" => $request->request->get('battle_id'),
+        ]);
+
+        $battle->setWinner($this->getUser());
+        $entityManager->persist($battle);
+        $entityManager->flush();
+
+        $pusher->trigger($request->request->get('channel'), 'declare_loser', ['isHostWinner' => $battle->getUser1()->getId() === $this->getUser()->getId()]);
         return new JsonResponse(['status' => true]);
     }
 }
