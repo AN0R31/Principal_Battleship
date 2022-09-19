@@ -47,7 +47,7 @@ class BattleController extends AbstractController
 
         return sizeof($request->query) === 2 ? $this->render('/battle/battle.html.twig', [
             'battle_id' => $request->query->get('battle_id'),
-            'isHost' => $this->getUser()->getId() === $battle->getUser1()->getId() ? 1:0,
+            'isHost' => $this->getUser()->getId() === $battle->getUser1()->getId() ? 1 : 0,
             'boatSizes' => $boatSizes,
             'nrShips' => $nrShips,
             'nrShots' => $nrShots,
@@ -124,7 +124,7 @@ class BattleController extends AbstractController
     {
         $requestParameters = $request->request;
 
-        $nr = sizeof($requestParameters)-1;
+        $nr = sizeof($requestParameters) - 1;
 
         $battle = $entityManager->getRepository(Battle::class)->findOneBy([
             "id" => $request->request->get('battle_id'),
@@ -136,20 +136,17 @@ class BattleController extends AbstractController
 
         $board = $this->getUser()->getId() === $battle->getUser1()->getId() ? 'hostBoard' : 'guestBoard';
 
-        $iterationCounter = 0;
         foreach ($requestParameters as $value) {
-            if ($iterationCounter>$nr) {
-                break;
-            }
             $params = explode(',', $value);
-            $battleState->{$board}->boats->{$nr} = new \stdClass();
-            $battleState->{$board}->boats->{$nr}->coordinates = new \stdClass();
-            $battleState->{$board}->boats->{$nr}->health = $params[1];
-            $battleState->{$board}->boats->{$nr}->vertical = filter_var($params[2], FILTER_VALIDATE_BOOLEAN);
-            $battleState->{$board}->boats->{$nr}->coordinates->posX = str_split($params[0])[1];
-            $battleState->{$board}->boats->{$nr}->coordinates->posY = str_split($params[0])[0];
+            if (sizeof($params) > 1) {
+                $battleState->{$board}->boats->{$nr} = new \stdClass();
+                $battleState->{$board}->boats->{$nr}->coordinates = new \stdClass();
+                $battleState->{$board}->boats->{$nr}->health = $params[1];
+                $battleState->{$board}->boats->{$nr}->vertical = filter_var($params[2], FILTER_VALIDATE_BOOLEAN);
+                $battleState->{$board}->boats->{$nr}->coordinates->posX = str_split($params[0])[1];
+                $battleState->{$board}->boats->{$nr}->coordinates->posY = str_split($params[0])[0];
+            }
             $nr--;
-            $iterationCounter++;
         }
 
         $battleState = json_encode($battleState);
