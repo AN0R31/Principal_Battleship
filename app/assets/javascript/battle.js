@@ -2,8 +2,6 @@ import axios from "axios";
 import {customAlertError, customAlertSuccess} from "./customAlerts";
 import Pusher from "pusher-js";
 
-console.log(isHost)
-
 function hit(coordinates) {
     let cellId = coordinates[0] + coordinates[1]
 
@@ -14,7 +12,7 @@ function hit(coordinates) {
 }
 
 ///////////////////////////PUSHER///////////////////////////////////////
-let channelName = document.getElementById("test").innerText;
+let channelName = battle_id;
 var pusher = new Pusher('7cb53bc01cb5c9f74363', {
     cluster: 'eu'
 });
@@ -72,7 +70,6 @@ function doesGivenBoatFitOnGrid(boat, cellId, rotation) {
 }
 
 function doesGivenBoatOverlapTheOthers(boat, cellId, rotation) {
-    console.log(boat)
     let boatSize = boat.getAttribute('data-size')
 
     let cellX = cellId[1]
@@ -82,10 +79,7 @@ function doesGivenBoatOverlapTheOthers(boat, cellId, rotation) {
         for (let x = 0; x < boatSize; x++) {
             let cellId = cellY + (Number(cellX) + x)
 
-            console.log(cellId)
-
-            if (document.getElementById(cellId).innerHTML !== '0') {
-                console.log(cellId, typeof document.getElementById(cellId).innerHTML, document.getElementById(cellId).innerHTML, typeof '0', '0')
+            if (document.getElementById(cellId).innerHTML[0] !== '0') {
                 return true
             }
         }
@@ -94,10 +88,7 @@ function doesGivenBoatOverlapTheOthers(boat, cellId, rotation) {
         for (let y = 0; y < boatSize; y++) {
             let cellId = (Number(cellY) + y) + cellX
 
-            console.log(cellId)
-
-            if (document.getElementById(cellId).innerHTML !== '0') {
-                console.log(cellId, typeof document.getElementById(cellId).innerHTML, document.getElementById(cellId).innerHTML, typeof '0', '0')
+            if (document.getElementById(cellId).innerHTML[0] !== '0') {
                 return true
             }
         }
@@ -181,7 +172,8 @@ document.getElementById("send").addEventListener('click', function () {
         let ship = placedBoats[`${boatNumber}`]
         dataToSend.set(ship.coordinates, [boatNumber, ship.health, ship.vertical]);
     }
-    axios.post('/battle/load', dataToSend).then(r => console.log(r.data))
+    dataToSend.set('battle_id', battle_id)
+    axios.post('/battle/load', dataToSend).then()
     // }
 })
 
@@ -192,6 +184,7 @@ document.getElementById("reset-board").addEventListener('click', function () {
         li.style.backgroundColor = 'gray'
         li.style.color = 'black'
     }
+    console.log(document.getElementById('boats').children)
     for (let child of document.getElementById('boats').children) {
         child.style.display = 'flex'
         child.classList.add('boat-to-select')
@@ -210,7 +203,8 @@ for (let cell of opponentCells) {
             const dataToSend = new FormData;
             dataToSend.set('hit', cell.getAttribute('id'))
             dataToSend.set('channel', channelName)
-            axios.post("/battle/hit", dataToSend).then(r => console.log(r.data.channel))
+            dataToSend.set('battle_id', battle_id)
+            axios.post("/battle/hit", dataToSend).then()
         }
     });
 }
