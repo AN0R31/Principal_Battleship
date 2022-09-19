@@ -88,7 +88,7 @@ class BattleController extends AbstractController
     }
 
     #[Route('/battle/join', name: 'join_battle', methods: ['post'])]
-    public function joinBattle(Request $request, EntityManagerInterface $entityManager, JoinBattleService $service): Response
+    public function joinBattle(Pusher $pusher, Request $request, EntityManagerInterface $entityManager, JoinBattleService $service): Response
     {
         $givenPassword = $request->request->get('password');
         $battle = $entityManager->getRepository(Battle::class)->findOneBy(['password' => $givenPassword]);
@@ -107,6 +107,8 @@ class BattleController extends AbstractController
 
             $entityManager->persist($battle);
             $entityManager->flush();
+
+            $pusher->trigger(strval($battle->getId()), 'join', ['user1Username' => $battle->getUser1()->getUsername(), 'user2Username' => $battle->getUser2()->getUsername()]);
 
             return new JsonResponse([
                 'status' => true,

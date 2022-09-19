@@ -48,9 +48,9 @@
     </div>
 
     {% if status is same as(true) %}
-        <h3>{{ user1Username }} VS {{ user2Username }}</h3>
+        <h3 id="vs">{{ user1Username }} VS {{ user2Username }}</h3>
     {% else %}
-        <h3>{{ status }}</h3>
+        <h3 id="vs">{{ status }}</h3>
     {% endif %}
 
     <div style="display: flex;justify-content: center">
