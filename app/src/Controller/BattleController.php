@@ -163,7 +163,7 @@ class BattleController extends AbstractController
         $entityManager->persist($battle);
         $entityManager->flush();
 
-        $pusher->trigger($request->request->get('channel'), 'new-greeting', []);
+        $pusher->trigger($request->request->get('channel'), 'new-greeting', ['board' => $board, 'coordinates' => $coordinates]);
         return new JsonResponse(['status' => true]);
     }
 }
