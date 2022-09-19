@@ -129,7 +129,7 @@ for (let cell of cells) {
                     placedBoats[`${startingCellOfBoat}`] = {
                         'coordinates': dragged.getAttribute('id'),
                         'health': dragged.getAttribute('data-size'),
-                        'vertical': dragged.getAttribute('data-position')
+                        'vertical': dragged.getAttribute('data-rotation')
                     }
 
                     let remainingBoatsToSelect = document.getElementsByClassName('boat-to-select')
@@ -149,7 +149,7 @@ for (let cell of cells) {
                     placedBoats[`${startingCellOfBoat}`] = {
                         'coordinates': dragged.getAttribute('id'),
                         'health': dragged.getAttribute('data-size'),
-                        'vertical': dragged.getAttribute('data-position')
+                        'vertical': dragged.getAttribute('data-rotation')
                     }
 
                     let remainingBoatsToSelect = document.getElementsByClassName('boat-to-select')
@@ -174,6 +174,7 @@ document.getElementById("send").addEventListener('click', function () {
     const dataToSend = new FormData()
     for (const boatNumber in placedBoats) {
         let ship = placedBoats[`${boatNumber}`]
+        console.log(ship)
         dataToSend.set(ship.coordinates, [boatNumber, ship.health, ship.vertical]);
     }
     dataToSend.set('battle_id', battle_id)
