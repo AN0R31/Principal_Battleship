@@ -34,6 +34,13 @@ class BattleController extends AbstractController
         $status = false;
         $isUserSpectator = false;
 
+        $board = $this->getUser()->getId() === $battle->getUser1()->getId() ? 'hostBoard' : 'guestBoard';
+
+        $battleState = $battle->getBattleState();
+        $battleState = json_decode($battleState);
+
+        $haveBoatsBeenSet = (int)isset($battleState->{$board}->boats->{1});
+
         if ($battle->getUser2() === null) {
             $status = 'Waiting for opponent...';
         } else if (!$service->isLoggedUserSameAsGiven($battle->getUser1()) && !$service->isLoggedUserSameAsGiven($battle->getUser2())) {
@@ -58,7 +65,8 @@ class BattleController extends AbstractController
         return sizeof($request->query) === 2 ? $this->render('/battle/battle.html.twig', [
             'battle_id' => $request->query->get('battle_id'),
             'isHost' => $this->getUser()->getId() === $battle->getUser1()->getId() ? 1 : 0,
-            'isSpectator' => $isUserSpectator,
+            'isSpectator' => (int)$isUserSpectator,
+            'haveBoatsBeenSet' => $haveBoatsBeenSet,
             'boatSizes' => $boatSizes,
             'nrShips' => $nrShips,
             'nrShots' => $nrShots,
@@ -142,7 +150,7 @@ class BattleController extends AbstractController
     }
 
     #[Route('/battle/load', name: 'load_battle', methods: ['post'])]
-    public function load(Request $request, EntityManagerInterface $entityManager): Response
+    public function load(Request $request, EntityManagerInterface $entityManager, JoinBattleService $service): Response
     {
         $requestParameters = $request->request;
 
@@ -151,31 +159,34 @@ class BattleController extends AbstractController
         ]);
 
         $battleState = $battle->getBattleState();
-
         $battleState = json_decode($battleState);
 
         $board = $this->getUser()->getId() === $battle->getUser1()->getId() ? 'hostBoard' : 'guestBoard';
 
-        foreach ($requestParameters as $key => $value) {
-            $params = explode(',', $value);
-            if (sizeof($params) > 1) {
-                $boatNr = substr($key, -1);
-                $battleState->{$board}->boats->{$boatNr} = new stdClass();
-                $battleState->{$board}->boats->{$boatNr}->coordinates = new stdClass();
-                $battleState->{$board}->boats->{$boatNr}->health = $params[1];
-                $battleState->{$board}->boats->{$boatNr}->size = $params[1];
-                $battleState->{$board}->boats->{$boatNr}->vertical = filter_var($params[2], FILTER_VALIDATE_BOOLEAN);
-                $battleState->{$board}->boats->{$boatNr}->coordinates->posX = str_split($params[0])[1];
-                $battleState->{$board}->boats->{$boatNr}->coordinates->posY = str_split($params[0])[0];
+        if (!isset($battleState->{$board}->boats->{1})) {
+
+            foreach ($requestParameters as $key => $value) {
+                $params = explode(',', $value);
+                if (sizeof($params) > 1) {
+                    $boatNr = substr($key, -1);
+                    $battleState->{$board}->boats->{$boatNr} = new stdClass();
+                    $battleState->{$board}->boats->{$boatNr}->coordinates = new stdClass();
+                    $battleState->{$board}->boats->{$boatNr}->health = $params[1];
+                    $battleState->{$board}->boats->{$boatNr}->size = $params[1];
+                    $battleState->{$board}->boats->{$boatNr}->vertical = filter_var($params[2], FILTER_VALIDATE_BOOLEAN);
+                    $battleState->{$board}->boats->{$boatNr}->coordinates->posX = str_split($params[0])[1];
+                    $battleState->{$board}->boats->{$boatNr}->coordinates->posY = str_split($params[0])[0];
+                }
             }
+
+            $battleState = json_encode($battleState);
+            $battle->setBattleState($battleState);
+            $entityManager->persist($battle);
+            $entityManager->flush();
+
+            return new JsonResponse(['status' => true]);
         }
-
-        $battleState = json_encode($battleState);
-        $battle->setBattleState($battleState);
-        $entityManager->persist($battle);
-        $entityManager->flush();
-
-        return new JsonResponse(['status' => true]);
+        return new JsonResponse(['status' => false]);
     }
 
     #[Route('/battle/hit', name: 'hit', methods: ['post'])]
