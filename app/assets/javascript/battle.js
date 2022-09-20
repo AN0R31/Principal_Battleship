@@ -196,6 +196,30 @@ for (let cell of cells) {
     });
 }
 
+checkPoint();
+
+function checkPoint() {
+    loadedBoats = JSON.parse(loadedBoats)
+    let nrOfProperties = Object.keys(loadedBoats).length;
+    console.log(loadedBoats)
+    if (nrOfProperties > 0) {
+        for (let boatNr in loadedBoats) {
+            let deltaX = loadedBoats[boatNr].vertical ? 0 : 1;
+            let deltaY = loadedBoats[boatNr].vertical ? 1 : 0;
+
+            for (let j = 0; j < loadedBoats[boatNr].health; j++) {
+                let coordY = Number(loadedBoats[boatNr].coordinates.posY) + Number(j * deltaY);
+                let coordX = Number(loadedBoats[boatNr].coordinates.posX) + Number(j * deltaX);
+                let k = document.getElementById(coordY + "" + coordX);
+                k.innerHTML = boatNr
+                k.style.backgroundColor = 'black'
+                k.style.color = 'white'
+            }
+
+        }
+    }
+}
+
 let placedBoats = {};
 
 document.getElementById("send").addEventListener('click', function () {
