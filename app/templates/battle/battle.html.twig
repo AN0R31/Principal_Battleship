@@ -7,10 +7,10 @@
 {% endblock %}
 
 {% block body %}
-
     <script>
         let isHost = '{{ isHost }}';
         let battle_id = '{{ battle_id }}';
+        let loadedBoats = '{{ placedBoats | json_encode | raw }}'
     </script>
 
     <div id="button-home" class="button-create-match home">Home</div>

@@ -6,7 +6,9 @@ use App\Entity\Battle;
 use App\Service\CreateMatchService;
 use App\Service\JoinBattleService;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Pusher\Pusher;
+use stdClass;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,6 +46,9 @@ class BattleController extends AbstractController
         } else if ($nrShips === 7) {
             $boatSizes = [2, 3, 3, 3, 4, 5, 5];
         }
+        $battleState = json_decode($battle->getBattleState(), true);
+
+        $board = $this->getUser()->getId() === $battle->getUser1()->getId() ? 'hostBoard' : 'guestBoard';
 
         return sizeof($request->query) === 2 ? $this->render('/battle/battle.html.twig', [
             'battle_id' => $request->query->get('battle_id'),
@@ -53,7 +58,10 @@ class BattleController extends AbstractController
             'nrShots' => $nrShots,
             'user1Username' => $user1Username,
             'user2Username' => $user2Username,
-            'status' => $status]) : $this->redirectToRoute('app_home');
+            'status' => $status,
+            'placedBoats' => $battleState[$board]['boats'],
+        ]) : $this->redirectToRoute('app_home');
+
 
     }
 
@@ -74,7 +82,7 @@ class BattleController extends AbstractController
         try {
             $entityManager->persist($battle);
             $entityManager->flush();
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return new JsonResponse(['exception' => $exception]);
         }
 
@@ -124,8 +132,6 @@ class BattleController extends AbstractController
     {
         $requestParameters = $request->request;
 
-        $nr = sizeof($requestParameters) - 1;
-
         $battle = $entityManager->getRepository(Battle::class)->findOneBy([
             "id" => $request->request->get('battle_id'),
         ]);
@@ -136,18 +142,18 @@ class BattleController extends AbstractController
 
         $board = $this->getUser()->getId() === $battle->getUser1()->getId() ? 'hostBoard' : 'guestBoard';
 
-        foreach ($requestParameters as $value) {
+        foreach ($requestParameters as $key => $value) {
             $params = explode(',', $value);
             if (sizeof($params) > 1) {
-                $battleState->{$board}->boats->{$nr} = new \stdClass();
-                $battleState->{$board}->boats->{$nr}->coordinates = new \stdClass();
-                $battleState->{$board}->boats->{$nr}->health = $params[1];
-                $battleState->{$board}->boats->{$nr}->size = $params[1];
-                $battleState->{$board}->boats->{$nr}->vertical = filter_var($params[2], FILTER_VALIDATE_BOOLEAN);
-                $battleState->{$board}->boats->{$nr}->coordinates->posX = str_split($params[0])[1];
-                $battleState->{$board}->boats->{$nr}->coordinates->posY = str_split($params[0])[0];
+                $boatNr = substr($key, -1);
+                $battleState->{$board}->boats->{$boatNr} = new stdClass();
+                $battleState->{$board}->boats->{$boatNr}->coordinates = new stdClass();
+                $battleState->{$board}->boats->{$boatNr}->health = $params[1];
+                $battleState->{$board}->boats->{$boatNr}->size = $params[1];
+                $battleState->{$board}->boats->{$boatNr}->vertical = filter_var($params[2], FILTER_VALIDATE_BOOLEAN);
+                $battleState->{$board}->boats->{$boatNr}->coordinates->posX = str_split($params[0])[1];
+                $battleState->{$board}->boats->{$boatNr}->coordinates->posY = str_split($params[0])[0];
             }
-            $nr--;
         }
 
         $battleState = json_encode($battleState);
@@ -173,7 +179,7 @@ class BattleController extends AbstractController
 
         $nrOfHits = count(get_object_vars($battleState->{$board}->hitsTaken)) + 1;
 
-        $battleState->{$board}->hitsTaken->{$nrOfHits} = new \stdClass();
+        $battleState->{$board}->hitsTaken->{$nrOfHits} = new stdClass();
         $battleState->{$board}->hitsTaken->{$nrOfHits}->posX = $coordinates[1];
         $battleState->{$board}->hitsTaken->{$nrOfHits}->posY = $coordinates[0];
 
