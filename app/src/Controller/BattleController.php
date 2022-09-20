@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class BattleController extends AbstractController
 {
     #[Route('/battle', name: 'show_battle')]
-    public function showBattle(Request $request, EntityManagerInterface $entityManager): Response
+    public function showBattle(Request $request, EntityManagerInterface $entityManager, JoinBattleService $service): Response
     {
         if (!$this->getUser())
             return $this->redirectToRoute('app_login');
@@ -31,8 +31,13 @@ class BattleController extends AbstractController
         $user2Username = null;
         $user1Username = null;
 
+        $status = false;
+        $isUserSpectator = false;
+
         if ($battle->getUser2() === null) {
             $status = 'Waiting for opponent...';
+        } else if (!$service->isLoggedUserSameAsGiven($battle->getUser1()) && !$service->isLoggedUserSameAsGiven($battle->getUser2())) {
+            $isUserSpectator = true;
         } else {
             $status = true;
             $user2Username = $battle->getUser2()->getUsername();
@@ -53,6 +58,7 @@ class BattleController extends AbstractController
         return sizeof($request->query) === 2 ? $this->render('/battle/battle.html.twig', [
             'battle_id' => $request->query->get('battle_id'),
             'isHost' => $this->getUser()->getId() === $battle->getUser1()->getId() ? 1 : 0,
+            'isSpectator' => $isUserSpectator,
             'boatSizes' => $boatSizes,
             'nrShips' => $nrShips,
             'nrShots' => $nrShots,
@@ -109,21 +115,29 @@ class BattleController extends AbstractController
             return new JsonResponse(['status' => false, 'message' => 'Cannot join your own Battle!']);
         }
 
-        if ($givenPassword === $battle->getPassword()) {
+        if ($battle->getUser2() === null) {
+            if ($givenPassword === $battle->getPassword()) { ////USELESS, WE ALREADY SEARCH BY PASSWORD
 
-            $battle->setUser2($this->getUser());
+                $battle->setUser2($this->getUser());
 
-            $entityManager->persist($battle);
-            $entityManager->flush();
+                $entityManager->persist($battle);
+                $entityManager->flush();
 
-            $pusher->trigger(strval($battle->getId()), 'join', ['user1Username' => $battle->getUser1()->getUsername(), 'user2Username' => $battle->getUser2()->getUsername()]);
+                $pusher->trigger(strval($battle->getId()), 'join', ['user1Username' => $battle->getUser1()->getUsername(), 'user2Username' => $battle->getUser2()->getUsername()]);
 
+                return new JsonResponse([
+                    'status' => true,
+                    'battle_id' => $battle->getId(),
+                ]);
+            }
+        } else if ($service->isLoggedUserSameAsGiven($battle->getUser2())) {
             return new JsonResponse([
                 'status' => true,
                 'battle_id' => $battle->getId(),
             ]);
+        } else {
+            return new JsonResponse(['status' => null, 'title' => 'Battle already full!', 'question' => 'Do you wish to join as spectator?', 'battle_id' => $battle->getId()]);
         }
-
         return new JsonResponse(['status' => false, 'message' => 'Something went wrong. Try Again!']);
     }
 
