@@ -9,9 +9,14 @@
 {% block body %}
     <script>
         let isHost = '{{ isHost }}';
+        let isSpectator = '{{ isSpectator }}';
         let battle_id = '{{ battle_id }}';
         let loadedBoats = '{{ placedBoats | json_encode | raw }}'
     </script>
+
+    {% if isSpectator %}
+        <h3>SPECTATOR MODE</h3>
+    {% endif %}
 
     <div id="button-home" class="button-create-match home">Home</div>
 
