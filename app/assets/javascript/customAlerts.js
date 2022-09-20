@@ -49,7 +49,6 @@ export function customOneFieldForm(title, submitButtonName) {
                 '/battle/join',
                 dataToSend,
             ).then(function (response) {
-                console.log(response.data)
                 if (response.data.status === true) {
                     window.location.href = '/battle?battle_id=' + response.data.battle_id + '&password=' + dataToSend.get('password')
                 } else if (response.data.status === null) {

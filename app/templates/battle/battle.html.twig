@@ -11,41 +11,27 @@
         let isHost = '{{ isHost }}';
         let isSpectator = '{{ isSpectator }}';
         let battle_id = '{{ battle_id }}';
-        let loadedBoats = '{{ placedBoats | json_encode | raw }}'
+        let loadedBoats = '{{ placedBoats | json_encode | raw }}';
+        let haveBoatsBeenSet = '{{ haveBoatsBeenSet }}';
     </script>
-
-    {% if isSpectator %}
-        <h3>SPECTATOR MODE</h3>
-    {% endif %}
 
     <div id="button-home" class="button-create-match home">Home</div>
 
     <h1>BATTLE</h1>
 
-    <div id="boats" style="position: absolute; margin-top: 55vh">
-        {% for i in  1..nrShips %}
-            <div class="boat-to-select" style="display: flex">
-                <div id="boat_{{ i }}" data-rotation="0" draggable="true" class="boats"
-                     style="display: flex; width: fit-content;"
-                     data-size="{{ boatSizes[i-1] }}"
-                     data-position="{{ "false" }}">
-                    {% for j in 1..boatSizes[i-1] %}
-                        <div class="ship"
-                             style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">{{ i }}</div>
-                    {% endfor %}
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-    <div style="position:absolute; margin-top: 0">
+    {% if isSpectator %}
+        <h3>SPECTATOR MODE</h3>
+    {% endif %}
+
+    <div id="grid-options" class="grid-options" style="position:absolute; margin-top: 0">
         <label for="vertical">Vertical: </label>
         <input type="checkbox" id="vertical" name="vertical" value="{{ 0 }}">
         <div id="send-or-reset" style="display: flex">
-            <div id="send"
+            <div id="send" class="boats-button"
                  style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">
                 Send
             </div>
-            <div id="reset-board"
+            <div id="reset-board" class="boats-button"
                  style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">
                 Reset
             </div>
@@ -84,6 +70,22 @@
                 </ul>
             {% endfor %}
         </div>
+    </div>
+
+    <div id="boats" style="margin: 5vh 0; width: 100%; display: inline-flex; justify-content: space-around">
+        {% for i in  1..nrShips %}
+            <div class="boat-to-select" style="margin-right: 20px">
+                <div id="boat_{{ i }}" data-rotation="0" draggable="true" class="boats"
+                     style="display: flex;"
+                     data-size="{{ boatSizes[i-1] }}"
+                     data-position="{{ "false" }}">
+                    {% for j in 1..boatSizes[i-1] %}
+                        <div class="ship"
+                             style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">{{ i }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
     </div>
 
 {% endblock %}

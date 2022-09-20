@@ -1,5 +1,5 @@
 body {
-    @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap');
     font-family: 'Roboto Mono', monospace;
     background-color: dimgray;
 }
@@ -131,4 +131,38 @@ h3 {
 
 .selected-shot {
     background-color: darkgray;
+}
+
+.boats {
+    background: linear-gradient(90deg, rgba(103, 103, 103, 1) 0%, rgba(145, 145, 145, 1) 100%);
+    margin-bottom: 20px;
+}
+
+.boats:hover {
+    background: linear-gradient(90deg, rgba(84, 84, 84, 1) 0%, rgba(147, 147, 147, 1) 100%);
+}
+
+.boats:active {
+    background: linear-gradient(90deg, rgba(61, 61, 61, 1) 0%, rgba(113, 113, 113, 1) 100%);
+}
+
+.boats-button {
+    background: linear-gradient(90deg, rgba(103, 103, 103, 1) 0%, rgba(145, 145, 145, 1) 100%);
+    margin-right: 20px;
+    margin-top: 50px;
+}
+
+.boats-button:hover {
+    background: linear-gradient(90deg, rgba(84, 84, 84, 1) 0%, rgba(147, 147, 147, 1) 100%);
+    cursor: grab;
+}
+
+.boats-button:active {
+    background: linear-gradient(90deg, rgba(61, 61, 61, 1) 0%, rgba(113, 113, 113, 1) 100%);
+}
+
+.grid-options {
+    position: absolute;
+    margin-left: 10vw;
+    padding-top: 20vh;
 }

@@ -2,6 +2,16 @@ import axios from "axios";
 import {customAlertError, customAlertSuccess} from "./customAlerts";
 import Pusher from "pusher-js";
 
+console.log(haveBoatsBeenSet)
+if (Number(haveBoatsBeenSet) === 1) {
+    hideElementById('grid-options')
+    hideElementById('boats')
+}
+
+function hideElementById(id) {
+    document.getElementById(id).style.display = 'none';
+}
+
 function hit(coordinates) {
     let cellId = coordinates[0] + coordinates[1]
 
@@ -47,15 +57,13 @@ channel.bind('join', function (params) {
 });
 
 channel.bind('declare_loser', function (params) {
-    console.log(params.isHostWinner, Number(isHost))
-        if (params.isHostWinner === true && Number(isHost) === 1) {
-            document.getElementById('vs').innerHTML = 'YOU WON!';
-        } else if (params.isHostWinner === false && Number(isHost) === 0) {
-            document.getElementById('vs').innerHTML = 'YOU WON!';
-        }
-        else {
-            document.getElementById('vs').innerHTML = 'YOU LOST!';
-        }
+    if (params.isHostWinner === true && Number(isHost) === 1) {
+        document.getElementById('vs').innerHTML = 'YOU WON!';
+    } else if (params.isHostWinner === false && Number(isHost) === 0) {
+        document.getElementById('vs').innerHTML = 'YOU WON!';
+    } else {
+        document.getElementById('vs').innerHTML = 'YOU LOST!';
+    }
 });
 ///////////////////////////////////////////////////////////////////////
 
@@ -201,7 +209,6 @@ checkPoint();
 function checkPoint() {
     loadedBoats = JSON.parse(loadedBoats)
     let nrOfProperties = Object.keys(loadedBoats).length;
-    console.log(loadedBoats)
     if (nrOfProperties > 0) {
         for (let boatNr in loadedBoats) {
             let deltaX = loadedBoats[boatNr].vertical ? 0 : 1;
@@ -227,12 +234,19 @@ document.getElementById("send").addEventListener('click', function () {
     const dataToSend = new FormData()
     for (const boatNumber in placedBoats) {
         let ship = placedBoats[`${boatNumber}`]
-        console.log(ship)
         dataToSend.set(ship.coordinates, [boatNumber, ship.health, ship.vertical]);
     }
     dataToSend.set('battle_id', battle_id)
-    axios.post('/battle/load', dataToSend).then()
-    // }
+    axios.post('/battle/load', dataToSend).then(function (response) {
+        if (response.data.status === true) {
+            customAlertSuccess('Boats have been set!')
+        } else {
+            customAlertError('Boats have already been set!')
+        }
+
+        hideElementById('grid-options')
+        hideElementById('boats')
+    })
 })
 
 document.getElementById("reset-board").addEventListener('click', function () {
@@ -242,7 +256,6 @@ document.getElementById("reset-board").addEventListener('click', function () {
         li.style.backgroundColor = 'gray'
         li.style.color = 'black'
     }
-    console.log(document.getElementById('boats').children)
     for (let child of document.getElementById('boats').children) {
         child.style.display = 'flex'
         child.classList.add('boat-to-select')
