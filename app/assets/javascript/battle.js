@@ -2,13 +2,49 @@ import axios from "axios";
 import {customAlertError, customAlertSuccess} from "./customAlerts";
 import Pusher from "pusher-js";
 
-loadBoats();
-loadHits();
+if (Number(isSpectator) === 0) {
+    loadBoats();
 
-if (Number(haveBoatsBeenSet) === 1) {
-    hideElementById('grid-options')
-    hideElementById('boats')
+    if (Number(haveBoatsBeenSet) === 1) {
+        hideElementById('grid-options')
+        hideElementById('boats')
+    }
+
+    document.getElementById("send").addEventListener('click', function () {
+        // if (Object.keys(boatCoordinates).length === 3) {
+        const dataToSend = new FormData()
+        for (const boatNumber in placedBoats) {
+            let ship = placedBoats[`${boatNumber}`]
+            dataToSend.set(ship.coordinates, [boatNumber, ship.health, ship.vertical]);
+        }
+        dataToSend.set('battle_id', battle_id)
+        axios.post('/battle/load', dataToSend).then(function (response) {
+            if (response.data.status === true) {
+                customAlertSuccess('Boats have been set!')
+            } else {
+                customAlertError('Boats have already been set!')
+            }
+
+            hideElementById('grid-options')
+            hideElementById('boats')
+        })
+    })
+
+    document.getElementById("reset-board").addEventListener('click', function () {
+        placedBoats = {};
+        for (let li of document.getElementsByClassName("cell")) {
+            li.innerText = '0';
+            li.style.backgroundColor = 'gray'
+            li.style.color = 'black'
+        }
+        for (let child of document.getElementById('boats').children) {
+            child.style.display = 'flex'
+            child.classList.add('boat-to-select')
+        }
+    });
 }
+
+loadHits();
 
 function hideElementById(id) {
     document.getElementById(id).style.display = 'none';
@@ -39,18 +75,45 @@ var pusher = new Pusher('7cb53bc01cb5c9f74363', {
 });
 const channel = pusher.subscribe(channelName);
 channel.bind('new-greeting', function (params) {
+    console.log(params)
     if (Number(isHost) === 1 && params.board === 'hostBoard') {
         if (params.isHit === true) {
             hitBoat(params.coordinates)
         } else {
             hit(params.coordinates)
         }
-    } else if (Number(isHost) === 0 && params.board === 'guestBoard') {
+    } else if (Number(isHost) === 0 && params.board === 'guestBoard' && Number(isSpectator) === 0) {
         if (params.isHit === true) {
             hitBoat(params.coordinates)
         } else {
             hit(params.coordinates)
         }
+        /////////////// FOR SPECTATOR ////////////////////
+    } else if (Number(isSpectator) === 1) {
+        if (params.board === 'guestBoard') {
+            if (params.isHit === true) {
+                hit(params.coordinates)
+            } else {
+                hitBoat(params.coordinates)
+            }
+        } else {
+            if (params.isHit === true) {
+                let cellId = params.coordinates[0] + " " + params.coordinates[1]
+
+                let targetCell = document.getElementById(cellId)
+
+                targetCell.style.backgroundColor = 'green';
+                targetCell.setAttribute('data-hit', "true");
+            } else {
+                let cellId = params.coordinates[0] + " " + params.coordinates[1]
+
+                let targetCell = document.getElementById(cellId)
+
+                targetCell.style.backgroundColor = 'red';
+                targetCell.setAttribute('data-hit', "true");
+            }
+        }
+
     }
 });
 
@@ -231,11 +294,21 @@ function loadHits() {
     hitsTaken = JSON.parse(hitsTaken);
     hitsSent = JSON.parse(hitsSent);
 
-    for (let index in hitsTaken) {
-        if (hitsTaken[index].isHit) {
-            hitBoat(hitsTaken[index].posY + hitsTaken[index].posX);
-        } else {
-            hit(hitsTaken[index].posY + hitsTaken[index].posX);
+    if (Number(isSpectator) === 0) {
+        for (let index in hitsTaken) {
+            if (hitsTaken[index].isHit) {
+                hitBoat(hitsTaken[index].posY + hitsTaken[index].posX);
+            } else {
+                hit(hitsTaken[index].posY + hitsTaken[index].posX);
+            }
+        }
+    } else {
+        for (let index in hitsTaken) {
+            if (hitsTaken[index].isHit) {
+                hit(hitsTaken[index].posY + hitsTaken[index].posX);
+            } else {
+                hitBoat(hitsTaken[index].posY + hitsTaken[index].posX);
+            }
         }
     }
 
@@ -250,44 +323,9 @@ function loadHits() {
             cell.setAttribute('data-hit', 'true')
         }
     }
-
-
 }
 
 let placedBoats = {};
-
-document.getElementById("send").addEventListener('click', function () {
-    // if (Object.keys(boatCoordinates).length === 3) {
-    const dataToSend = new FormData()
-    for (const boatNumber in placedBoats) {
-        let ship = placedBoats[`${boatNumber}`]
-        dataToSend.set(ship.coordinates, [boatNumber, ship.health, ship.vertical]);
-    }
-    dataToSend.set('battle_id', battle_id)
-    axios.post('/battle/load', dataToSend).then(function (response) {
-        if (response.data.status === true) {
-            customAlertSuccess('Boats have been set!')
-        } else {
-            customAlertError('Boats have already been set!')
-        }
-
-        hideElementById('grid-options')
-        hideElementById('boats')
-    })
-})
-
-document.getElementById("reset-board").addEventListener('click', function () {
-    placedBoats = {};
-    for (let li of document.getElementsByClassName("cell")) {
-        li.innerText = '0';
-        li.style.backgroundColor = 'gray'
-        li.style.color = 'black'
-    }
-    for (let child of document.getElementById('boats').children) {
-        child.style.display = 'flex'
-        child.classList.add('boat-to-select')
-    }
-});
 
 // send hits to backend
 let opponentCells = document.querySelectorAll(".cells");
