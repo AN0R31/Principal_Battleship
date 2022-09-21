@@ -2,6 +2,12 @@ import axios from "axios";
 import {customAlertError, customAlertSuccess} from "./customAlerts";
 import Pusher from "pusher-js";
 
+turn = turn === 'host' ? 1 : 2; //WHICH USER'S TURN IT IS; 1 -> User1, 2 -> User2; HOST (User1) ALWAYS HAS THE FIRST MOVE!
+
+console.log(turn)
+
+let opponentCells = document.querySelectorAll(".cells");
+
 if (Number(isSpectator) === 0) {
     loadBoats();
 
@@ -75,7 +81,14 @@ var pusher = new Pusher('7cb53bc01cb5c9f74363', {
 });
 const channel = pusher.subscribe(channelName);
 channel.bind('new-greeting', function (params) {
-    console.log(params)
+
+
+    switchTurn()
+    adjustEventListenersBasedOnTurn()
+    console.log('TURN: ' + turn)
+    console.log('-------------------------')
+
+
     if (Number(isHost) === 1 && params.board === 'hostBoard') {
         if (params.isHit === true) {
             hitBoat(params.coordinates)
@@ -126,9 +139,12 @@ channel.bind('declare_loser', function (params) {
         document.getElementById('vs').innerHTML = 'YOU WON!';
     } else if (params.isHostWinner === false && Number(isHost) === 0) {
         document.getElementById('vs').innerHTML = 'YOU WON!';
+    } else if (Number(isSpectator) === 1) {
+        document.getElementById('spectator-mode-h').innerHTML = 'WINNER: ' + params.winner + '!';
     } else {
         document.getElementById('vs').innerHTML = 'YOU LOST!';
     }
+    removeEventListenersFromGrid();
 });
 ///////////////////////////////////////////////////////////////////////
 
@@ -327,38 +343,82 @@ function loadHits() {
 
 let placedBoats = {};
 
-// send hits to backend
-let opponentCells = document.querySelectorAll(".cells");
+function removeEventListenersFromGrid() {
+    for (let cell of opponentCells) {
+        cell.removeEventListener('click', cellEvent)
+    }
+}
 
-for (let cell of opponentCells) {
-    cell.addEventListener('click', function () {
-        if (!cell.getAttribute('data-hit')) {
-            cell.setAttribute('data-hit', "true");
+function switchTurn() {
+    turn = turn === 1 ? 2 : 1;
+}
 
-            const dataToSend = new FormData;
-            dataToSend.set('hit', cell.getAttribute('id'))
-            dataToSend.set('channel', channelName)
-            dataToSend.set('battle_id', battle_id)
-            axios.post("/battle/hit", dataToSend).then(function (response) {
-                if (response.data.isHit === true) {
-                    cell.style.backgroundColor = 'green'
-                } else {
-                    cell.style.backgroundColor = 'red'
-                }
-
-                if (response.data.allBoatsAreDestroyed === true) {
-                    document.getElementById('vs').innerHTML = 'YOU WON!'
-
-                    const dataToSendToEnd = new FormData;
-                    dataToSendToEnd.set('battle_id', battle_id)
-                    dataToSendToEnd.set('channel', channelName)
-                    axios.post("/battle/end", dataToSendToEnd)
-                    //     .then(function (response) {
-                    // });
-                }
-
-            });
-
+function adjustEventListenersBasedOnTurn() {
+    if (Number(isHost) === 1) {
+        if (turn === 1) {
+            addEventListenersToGrid()
+            console.log('ADDED PLAYER 1 LISTENERS')
+        } else {
+            removeEventListenersFromGrid()
+            console.log('REMOVED PLAYER 1 LISTENERS')
         }
-    })
+    } else {
+        if (turn === 2) {
+            addEventListenersToGrid()
+            console.log('ADDED PLAYER 2 LISTENERS')
+        } else {
+            removeEventListenersFromGrid()
+            console.log('REMOVED PLAYER 2 LISTENERS')
+        }
+    }
+}
+
+if ((Number(isHost) === 1 && turn === 1) || (Number(isHost) === 0 && turn === 2)) {
+    addEventListenersToGrid()
+}
+
+function cellEvent(event) {
+    let cell = event.currentTarget;
+    if (!cell.getAttribute('data-hit')) {
+        cell.setAttribute('data-hit', "true");
+
+        const dataToSend = new FormData;
+        dataToSend.set('hit', cell.getAttribute('id'))
+        dataToSend.set('channel', channelName)
+        dataToSend.set('battle_id', battle_id)
+        axios.post("/battle/hit", dataToSend).then(function (response) {
+
+            if (response.data.isHit === true) {
+                cell.style.backgroundColor = 'green'
+            } else {
+                cell.style.backgroundColor = 'red'
+            }
+
+            if (response.data.allBoatsAreDestroyed === true) {
+                document.getElementById('vs').innerHTML = 'YOU WON!'
+
+                const dataToSendToEnd = new FormData;
+                dataToSendToEnd.set('battle_id', battle_id)
+                dataToSendToEnd.set('channel', channelName)
+                axios.post("/battle/end", dataToSendToEnd)
+                //     .then(function (response) {
+                // });
+            }
+
+        });
+
+    }
+}
+
+function addEventListenersToGrid() {
+    console.log('ADDING........')
+    for (let cell of opponentCells) {
+        cell.addEventListener('click', cellEvent)
+    }
+}
+
+console.log(haveBoatsBeenSet, haveOpponentsBoatsBeenSet)
+
+if (Number(hasMatchEnded) === 1 || Number(haveBoatsBeenSet) === 0 || Number(haveOpponentsBoatsBeenSet) === 0) {
+    removeEventListenersFromGrid()
 }
