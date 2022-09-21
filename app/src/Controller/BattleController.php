@@ -62,6 +62,7 @@ class BattleController extends AbstractController
         $battleState = json_decode($battle->getBattleState(), true);
 
         $board = $this->getUser()->getId() === $battle->getUser1()->getId() ? 'hostBoard' : 'guestBoard';
+        $otherBoard = $board === 'hostBoard' ? 'guestBoard' : 'hostBoard';
 
         return sizeof($request->query) === 2 ? $this->render('/battle/battle.html.twig', [
             'battle_id' => $request->query->get('battle_id'),
@@ -75,6 +76,8 @@ class BattleController extends AbstractController
             'user2Username' => $user2Username,
             'status' => $status,
             'placedBoats' => $battleState[$board]['boats'],
+            'hitsTaken' => $battleState[$board]['hitsTaken'],
+            'hitsSent' => $battleState[$otherBoard]['hitsTaken'],
         ]) : $this->redirectToRoute('app_home');
 
 
