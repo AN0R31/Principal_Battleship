@@ -147,9 +147,15 @@ h3 {
 }
 
 .boats-button {
-    background: linear-gradient(90deg, rgba(103, 103, 103, 1) 0%, rgba(145, 145, 145, 1) 100%);
-    margin-right: 20px;
-    margin-top: 50px;
+    /*background: linear-gradient(90deg, rgba(103, 103, 103, 1) 0%, rgba(145, 145, 145, 1) 100%);*/
+    width: 125px;
+    text-align: center;
+    padding: 10px 20px;
+    border: 1px solid black;
+    border-radius: 2px;
+    color: greenyellow;
+    background-color: #494949;
+    cursor: grab;
 }
 
 .boats-button:hover {
@@ -162,7 +168,16 @@ h3 {
 }
 
 .grid-options {
-    position: absolute;
-    margin-left: 10vw;
-    padding-top: 20vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.send-or-reset {
+    display: inline-flex;
+    justify-content: center;
+}
+
+.vertical-checkbox {
+    display: inline-flex;
+    justify-content: center;
 }
