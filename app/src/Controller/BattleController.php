@@ -90,11 +90,14 @@ class BattleController extends AbstractController
     {
         $requestParameters = $request->request;
 
-        $battleState = '{"hostBoard":{"boats":{},"hitsTaken":{}},"guestBoard":{"boats":{},"hitsTaken":{}}}';
+        $nrShips = $requestParameters->get('ships');
+        $nrShots = $requestParameters->get('shots');
+
+        $battleState = "{\"game\":{\"numberOfBoats\":\"$nrShips\",\"numberOfHits\":\"$nrShots\",\"turn\":\"host\",\"hitsLeft\":\"$nrShots\"},\"hostBoard\":{\"boats\":{},\"hitsTaken\":{}},\"guestBoard\":{\"boats\":{},\"hitsTaken\":{}}}";
 
         $battle = new Battle();
-        $battle->setNrShips($requestParameters->get('ships'));
-        $battle->setNrShots($requestParameters->get('shots'));
+        $battle->setNrShips($nrShips);
+        $battle->setNrShots($nrShots);
         $battle->setUser1($this->getUser());
         $battle->setPassword($service->matchPassword());
         $battle->setBattleState($battleState);
@@ -207,6 +210,20 @@ class BattleController extends AbstractController
         $battleState = json_decode($battle->getBattleState());
 
         $board = $this->getUser()->getId() === $battle->getUser1()->getId() ? 'guestBoard' : 'hostBoard';
+        $user = $board === 'guestBoard' ? 'host' : 'guest';
+        $gameSettings = $battleState->game;
+
+        if ($user !== $gameSettings->turn) {
+            dd("asdasdasd");
+//           return new JsonResponse(['status' => false]);
+        }
+
+        if (intval($gameSettings->hitsLeft) === 1) {
+            $battleState->game->turn = $board === 'guestBoard' ? 'guest' : 'host';
+            $battleState->game->hitsLeft = $battleState->game->numberOfHits;
+        } else {
+            $battleState->game->hitsLeft = $battleState->game->hitsLeft - 1;
+        }
 
         $nrOfHits = count(get_object_vars($battleState->{$board}->hitsTaken)) + 1;
 
