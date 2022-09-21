@@ -13,8 +13,11 @@
         let battle_id = '{{ battle_id }}';
         let loadedBoats = '{{ placedBoats | json_encode | raw }}';
         let haveBoatsBeenSet = '{{ haveBoatsBeenSet }}';
+        let haveOpponentsBoatsBeenSet = '{{ haveOpponentsBoatsBeenSet }}';
         let hitsTaken = '{{ hitsTaken | json_encode | raw }}';
         let hitsSent = '{{ hitsSent | json_encode | raw }}';
+        let hasMatchEnded = '{{ hasMatchEnded }}';
+        let turn = '{{ turn }}';
     </script>
 
     <div id="button-home" class="button-create-match home">Home</div>
@@ -22,10 +25,18 @@
     <h1>BATTLE</h1>
 
     {% if isSpectator %}
-        <h3>SPECTATOR MODE</h3>
+        {% if hasMatchEnded %}
+            <h3 id="spectator-mode-h">WINNER: {{ winner }}</h3>
+        {% else %}
+            <h3 id="spectator-mode-h">SPECTATOR MODE</h3>
+        {% endif %}
     {% else %}
         {% if status is same as(true) %}
-            <h3 id="vs">{{ user1Username }} VS {{ user2Username }}</h3>
+            {% if hasMatchEnded %}
+                <h3 id="vs">WINNER: {{ winner }}</h3>
+            {% else %}
+                <h3 id="vs">{{ user1Username }} VS {{ user2Username }}</h3>
+            {% endif %}
         {% else %}
             <h3 id="vs">{{ status }}</h3>
         {% endif %}
@@ -48,6 +59,7 @@
             {% else %}
                 <h3 style="margin-left: 50px">Your Board</h3>
             {% endif %}
+
             {% for i in 0..9 %}
                 <ul style="display: flex;list-style: none;margin: 0; justify-content: center">
                     {% for j in 0..9 %}

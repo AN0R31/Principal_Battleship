@@ -35,11 +35,17 @@ class BattleController extends AbstractController
         $isUserSpectator = false;
 
         $board = $this->getUser()->getId() === $battle->getUser1()->getId() ? 'hostBoard' : 'guestBoard';
+        $opponentsBoard = $this->getUser()->getId() === $battle->getUser1()->getId() ? 'guestBoard' : 'hostBoard';
 
         $battleState = $battle->getBattleState();
         $battleState = json_decode($battleState);
 
         $haveBoatsBeenSet = (int)isset($battleState->{$board}->boats->{1});
+        $haveOpponentsBoatsBeenSet = (int)isset($battleState->{$opponentsBoard}->boats->{1});
+
+        $hasMatchEnded = !($battle->getWinner() === null);
+
+        $winner = $hasMatchEnded ? $battle->getWinner()->getUsername() : null;
 
         if ($battle->getUser2() === null) {
             $status = 'Waiting for opponent...';
@@ -70,7 +76,11 @@ class BattleController extends AbstractController
             'battle_id' => $request->query->get('battle_id'),
             'isHost' => $this->getUser()->getId() === $battle->getUser1()->getId() ? 1 : 0,
             'isSpectator' => (int)$isUserSpectator,
+            'hasMatchEnded' => $hasMatchEnded,
+            'winner' => $winner,
+            'turn' => $battleState['game']['turn'],
             'haveBoatsBeenSet' => $haveBoatsBeenSet,
+            'haveOpponentsBoatsBeenSet' => $haveOpponentsBoatsBeenSet,
             'boatSizes' => $boatSizes,
             'nrShips' => $nrShips,
             'nrShots' => $nrShots,
@@ -284,7 +294,7 @@ class BattleController extends AbstractController
         $entityManager->persist($battle);
         $entityManager->flush();
 
-        $pusher->trigger($request->request->get('channel'), 'declare_loser', ['isHostWinner' => $battle->getUser1()->getId() === $this->getUser()->getId()]);
+        $pusher->trigger($request->request->get('channel'), 'declare_loser', ['isHostWinner' => $battle->getUser1()->getId() === $this->getUser()->getId(), 'winner' => $battle->getWinner()->getUsername()]);
         return new JsonResponse(['status' => true]);
     }
 }
