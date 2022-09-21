@@ -44,7 +44,7 @@
     <div style="display: flex;justify-content: center">
         <div>
             {% if isSpectator %}
-                <h3 style="margin-left: 50px">{{ user1Username }}</h3>
+                <h3 style="margin-left: 50px">{{ user2Username }}</h3>
             {% else %}
                 <h3 style="margin-left: 50px">Your Board</h3>
             {% endif %}
@@ -62,7 +62,7 @@
 
         <div>
             {% if isSpectator %}
-                <h3 style="margin-left: 50px">{{ user2Username }}</h3>
+                <h3 style="margin-left: 50px">{{ user1Username }}</h3>
             {% else %}
                 <h3 style="margin-left: 50px">Enemy Board</h3>
             {% endif %}
