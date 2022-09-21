@@ -2,7 +2,9 @@ import axios from "axios";
 import {customAlertError, customAlertSuccess} from "./customAlerts";
 import Pusher from "pusher-js";
 
-console.log(haveBoatsBeenSet)
+loadBoats();
+loadHits();
+
 if (Number(haveBoatsBeenSet) === 1) {
     hideElementById('grid-options')
     hideElementById('boats')
@@ -204,9 +206,7 @@ for (let cell of cells) {
     });
 }
 
-checkPoint();
-
-function checkPoint() {
+function loadBoats() {
     loadedBoats = JSON.parse(loadedBoats)
     let nrOfProperties = Object.keys(loadedBoats).length;
     if (nrOfProperties > 0) {
@@ -217,14 +217,41 @@ function checkPoint() {
             for (let j = 0; j < loadedBoats[boatNr].size; j++) {
                 let coordY = Number(loadedBoats[boatNr].coordinates.posY) + Number(j * deltaY);
                 let coordX = Number(loadedBoats[boatNr].coordinates.posX) + Number(j * deltaX);
-                let k = document.getElementById(coordY + "" + coordX);
-                k.innerHTML = boatNr
-                k.style.backgroundColor = 'black'
-                k.style.color = 'white'
+                let cell = document.getElementById(coordY + "" + coordX);
+                cell.innerHTML = boatNr
+                cell.style.backgroundColor = 'black'
+                cell.style.color = 'white'
             }
 
         }
     }
+}
+
+function loadHits() {
+    hitsTaken = JSON.parse(hitsTaken);
+    hitsSent = JSON.parse(hitsSent);
+
+    for (let index in hitsTaken) {
+        if (hitsTaken[index].isHit) {
+            hitBoat(hitsTaken[index].posY + hitsTaken[index].posX);
+        } else {
+            hit(hitsTaken[index].posY + hitsTaken[index].posX);
+        }
+    }
+
+    for (let index in hitsSent) {
+        let cell = document.getElementById(hitsSent[index].posY + " " + hitsSent[index].posX)
+
+        if (hitsSent[index].isHit) {
+            cell.style.backgroundColor = 'green'
+            cell.setAttribute('data-hit', 'true')
+        } else {
+            cell.style.backgroundColor = 'red'
+            cell.setAttribute('data-hit', 'true')
+        }
+    }
+
+
 }
 
 let placedBoats = {};
