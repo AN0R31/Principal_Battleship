@@ -51,6 +51,7 @@ class BattleController extends AbstractController
             $user1Username = $battle->getUser1()->getUsername();
         }
 
+        $boatSizes = null;
         if ($nrShips === 3) {
             $boatSizes = [2, 3, 5];
         } else if ($nrShips === 5) {

@@ -214,7 +214,7 @@ function checkPoint() {
             let deltaX = loadedBoats[boatNr].vertical ? 0 : 1;
             let deltaY = loadedBoats[boatNr].vertical ? 1 : 0;
 
-            for (let j = 0; j < loadedBoats[boatNr].health; j++) {
+            for (let j = 0; j < loadedBoats[boatNr].size; j++) {
                 let coordY = Number(loadedBoats[boatNr].coordinates.posY) + Number(j * deltaY);
                 let coordX = Number(loadedBoats[boatNr].coordinates.posX) + Number(j * deltaX);
                 let k = document.getElementById(coordY + "" + coordX);

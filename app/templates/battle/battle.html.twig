@@ -23,26 +23,22 @@
         <h3>SPECTATOR MODE</h3>
     {% endif %}
 
-    <div id="grid-options" class="grid-options" style="position:absolute; margin-top: 0">
-        <label for="vertical">Vertical: </label>
-        <input type="checkbox" id="vertical" name="vertical" value="{{ 0 }}">
-        <div id="send-or-reset" style="display: flex">
-            <div id="send" class="boats-button"
-                 style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">
-                Send
-            </div>
-            <div id="reset-board" class="boats-button"
-                 style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">
-                Reset
-            </div>
-        </div>
-    </div>
-
     {% if status is same as(true) %}
         <h3 id="vs">{{ user1Username }} VS {{ user2Username }}</h3>
     {% else %}
         <h3 id="vs">{{ status }}</h3>
     {% endif %}
+
+    <div id="grid-options" class="grid-options">
+        <div id="send-or-reset" class="send-or-reset">
+            <div id="send" class="boats-button">Send</div>
+            <div id="reset-board" class="boats-button">Reset</div>
+        </div>
+        <div id="vertical-checkbox" class="vertical-checkbox">
+            <p>Vertical:</p>
+            <input type="checkbox" id="vertical" name="vertical" value="{{ 0 }}">
+        </div>
+    </div>
 
     <div style="display: flex;justify-content: center">
         <div>
