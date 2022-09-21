@@ -45,6 +45,8 @@ class BattleController extends AbstractController
             $status = 'Waiting for opponent...';
         } else if (!$service->isLoggedUserSameAsGiven($battle->getUser1()) && !$service->isLoggedUserSameAsGiven($battle->getUser2())) {
             $isUserSpectator = true;
+            $user2Username = $battle->getUser2()->getUsername();
+            $user1Username = $battle->getUser1()->getUsername();
         } else {
             $status = true;
             $user2Username = $battle->getUser2()->getUsername();
