@@ -209,14 +209,16 @@ class BattleController extends AbstractController
                 $haveUser1BoatsBeenSet = isset($battleState->{'hostBoard'}->boats->{1});
             }
 
-            $pusher->trigger($request->request->get('channel'), 'start', ['haveUser1BoatsBeenSet' => $haveUser1BoatsBeenSet, 'haveUser2BoatsBeenSet' => $haveUser2BoatsBeenSet, 'user1Username' => $battle->getUser1()->getUsername(), 'user2Username' => $battle->getUser2()->getUsername()]);
+            //dd($board, $haveUser1BoatsBeenSet, $haveUser2BoatsBeenSet);
+
+            $pusher->trigger($request->request->get('channel'), 'start', ['haveUser1BoatsBeenSet' => $haveUser1BoatsBeenSet, 'haveUser2BoatsBeenSet' => $haveUser2BoatsBeenSet, 'user1Username' => $battle->getUser1() === null ? null : $battle->getUser1()->getUsername(), 'user2Username' => $battle->getUser2() === null ? null : $battle->getUser2()->getUsername()]);
 
             $battleState = json_encode($battleState);
             $battle->setBattleState($battleState);
             $entityManager->persist($battle);
             $entityManager->flush();
 
-            return new JsonResponse(['status' => true]);
+            return new JsonResponse(['status' => true, 'haveUser1BoatsBeenSet' => $haveUser1BoatsBeenSet, 'haveUser2BoatsBeenSet' => $haveUser2BoatsBeenSet]);
         }
         return new JsonResponse(['status' => false]);
     }
@@ -309,5 +311,30 @@ class BattleController extends AbstractController
 
         $pusher->trigger($request->request->get('channel'), 'declare_loser', ['isHostWinner' => $battle->getUser1()->getId() === $this->getUser()->getId(), 'winner' => $battle->getWinner()->getUsername()]);
         return new JsonResponse(['status' => true]);
+    }
+
+    #[Route('/battle/refreshGlobals', name: 'refreshGlobals', methods: ['post'])]
+    public function refreshGlobals(Pusher $pusher, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $battle = $entityManager->getRepository(Battle::class)->findOneBy([
+            "id" => $request->request->get('battle_id'),
+        ]);
+
+        $battleState = json_decode($battle->getBattleState());
+
+        $board = $this->getUser()->getId() === $battle->getUser1()->getId() ? 'hostBoard' : 'guestBoard';
+        $opponentsBoard = $this->getUser()->getId() === $battle->getUser1()->getId() ? 'guestBoard' : 'hostBoard';
+
+        $haveBoatsBeenSet = (int)isset($battleState->{$board}->boats->{1});
+        $haveOpponentsBoatsBeenSet = (int)isset($battleState->{$opponentsBoard}->boats->{1});
+
+        $hasMatchEnded = !($battle->getWinner() === null);
+
+        return new JsonResponse([
+            'status' => true,
+            'haveBoatsBeenSet' => $haveBoatsBeenSet,
+            'haveOpponentsBoatsBeenSet' => $haveOpponentsBoatsBeenSet,
+            'hasMatchEnded' => $hasMatchEnded,
+        ]);
     }
 }
