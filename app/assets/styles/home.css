@@ -2,6 +2,8 @@ body {
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap');
     font-family: 'Roboto Mono', monospace;
     background-color: dimgray;
+
+    margin: 0 0;
 }
 
 a {
@@ -11,7 +13,7 @@ a {
 h1 {
     font-size: 50px;
     text-align: center;
-    margin: 0 0;
+    margin: 20px 0;
     color: white;
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
@@ -29,8 +31,8 @@ h3 {
     position: absolute;
     width: 125px;
     text-align: center;
-    margin-left: 90vw;
-    margin-top: -45px;
+    margin-left: 89vw;
+    margin-top: -75px;
     padding: 10px 20px;
     border: 1px solid black;
     border-radius: 2px;
@@ -50,7 +52,7 @@ h3 {
 
 .home {
     margin-top: 0;
-    margin-left: 0;
+    margin-left: 20px;
 }
 
 .form-section-create-match {
@@ -63,8 +65,7 @@ h3 {
 .modal-create-match {
     display: none;
     background-color: rgba(248, 248, 255, 0.5);
-    margin-left: 36.5vw;
-    margin-top: 10vw;
+    margin-top: 30vh;
     border: 1px solid black;
     border-radius: 5px;
     position: absolute;
@@ -196,7 +197,60 @@ h3 {
     font-size: 24px;
 }
 
+.menu-line {
+    width: 100vw;
+    height: 2px;
+    background-color: black;
+    margin: 18px 0;
+    padding: 0 0;
+    border: 1px solid black;
+}
 
+.matches {
+    position: absolute;
+    margin-left: 85vw;
+    height: 100vh;
+    width: 15vw;
+    padding: 0 0;
+    border: 5px solid black;
+}
+
+.matches-line {
+    margin-left: 85vw;
+    width: 15vw;
+    background-color: black;
+    border: 1px solid black;
+}
+
+.battle-title {
+    font-size: 30px;
+    margin-left: 10px;
+    color: white;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.battle-participants {
+    font-size: 15px;
+    margin-left: 10px;
+    color: white;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.button-spectate {
+    position: absolute;
+    border: 1px solid black;
+    width: 50px;
+    padding: 10px 20px;
+    margin-left: 225px;
+    margin-top: -50px;
+    text-align: center;
+    background-color: white;
+}
+
+.button-spectate:hover {
+    background-color: lightgray;
+    cursor: grab;
+}
 
 
 

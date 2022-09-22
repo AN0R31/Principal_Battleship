@@ -45,16 +45,16 @@ function setStatus() {
             status = 'Waiting for opponent to place his boats...'
         }
 
-        if (Number(isSpectator) === 1 && Number(haveBoatsBeenSet) === 1 && Number(haveOpponentsBoatsBeenSet) === 1) {
+        if (Number(isSpectator) === 1 && Number(haveBoatsBeenSet) === 1 && Number(haveOpponentsBoatsBeenSet) === 1 && Number(hasMatchEnded) === 0) {
             if (turn === 1) {
                 status = 'Player 1 is shooting'
             } else {
                 status = 'Player 2 is shooting'
             }
-        } else if (Number(isSpectator) === 1) {
+        } else if (Number(isSpectator) === 1 && Number(hasMatchEnded) === 0) {
             status = 'Waiting for all players to place their boats...'
-        } else {
-            status = 'Connecting...'
+        } else if (Number(isSpectator) === 1) {
+            status = 'This match has ended!'
         }
 
         console.log(status)
