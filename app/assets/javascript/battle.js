@@ -137,6 +137,44 @@ channel.bind('join', function (params) {
 
 channel.bind('start', function (params) {
     if (params.haveUser1BoatsBeenSet && params.haveUser2BoatsBeenSet) {
+
+        document.getElementById('coin-flip-container').style.display = 'block';
+
+        let coin = document.querySelector(".coin");
+        let i = turn === 1 ? 0 : 1;
+
+        console.log(i)
+        console.log(i)
+        coin.style.animation = "none";
+        if (i) {
+            setTimeout(function () {
+                coin.style.animation = "spin-heads 3s forwards";
+            }, 1000);
+        } else {
+            setTimeout(function () {
+                coin.style.animation = "spin-tails 3s forwards";
+            }, 1000);
+        }
+        setTimeout(updateStats, 5000);
+
+        function updateStats() {
+            let winner = null;
+            if (i === 0) {
+                winner = params.user1Username;
+            } else {
+                winner = params.user2Username;
+            }
+            document.querySelector("#coin-flip-status").textContent = 'First move: ' + winner;
+
+            setTimeout(removeCoinFlipModal, 1500);
+        }
+
+        function removeCoinFlipModal() {
+            document.getElementById('coin-flip-container').style.display = 'none';
+        }
+
+
+
         if ((Number(isHost) === 1 && turn === 1) || (Number(isHost) === 0 && turn === 2)) {
             addEventListenersToGrid()
         }

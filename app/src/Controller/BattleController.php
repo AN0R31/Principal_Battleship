@@ -103,7 +103,10 @@ class BattleController extends AbstractController
         $nrShips = $requestParameters->get('ships');
         $nrShots = $requestParameters->get('shots');
 
-        $battleState = "{\"game\":{\"numberOfBoats\":\"$nrShips\",\"numberOfHits\":\"$nrShots\",\"turn\":\"host\",\"hitsLeft\":\"$nrShots\"},\"hostBoard\":{\"boats\":{},\"hitsTaken\":{}},\"guestBoard\":{\"boats\":{},\"hitsTaken\":{}}}";
+        $turn = rand(0,1);
+        $turn = $turn === 0 ? 'host' : 'guest';
+
+        $battleState = "{\"game\":{\"numberOfBoats\":\"$nrShips\",\"numberOfHits\":\"$nrShots\",\"turn\":\"$turn\",\"hitsLeft\":\"$nrShots\"},\"hostBoard\":{\"boats\":{},\"hitsTaken\":{}},\"guestBoard\":{\"boats\":{},\"hitsTaken\":{}}}";
 
         $battle = new Battle();
         $battle->setNrShips($nrShips);
@@ -206,9 +209,7 @@ class BattleController extends AbstractController
                 $haveUser1BoatsBeenSet = isset($battleState->{'hostBoard'}->boats->{1});
             }
 
-            //dd($battleState->{'guestBoard'}->boats->{1}, $battleState->{'hostBoard'}->boats->{1});
-
-            $pusher->trigger($request->request->get('channel'), 'start', ['haveUser1BoatsBeenSet' => $haveUser1BoatsBeenSet, 'haveUser2BoatsBeenSet' => $haveUser2BoatsBeenSet]);
+            $pusher->trigger($request->request->get('channel'), 'start', ['haveUser1BoatsBeenSet' => $haveUser1BoatsBeenSet, 'haveUser2BoatsBeenSet' => $haveUser2BoatsBeenSet, 'user1Username' => $battle->getUser1()->getUsername(), 'user2Username' => $battle->getUser2()->getUsername()]);
 
             $battleState = json_encode($battleState);
             $battle->setBattleState($battleState);
