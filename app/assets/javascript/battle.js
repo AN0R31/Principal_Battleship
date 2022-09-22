@@ -24,6 +24,7 @@ if (Number(isSpectator) === 0) {
             dataToSend.set(ship.coordinates, [boatNumber, ship.health, ship.vertical]);
         }
         dataToSend.set('battle_id', battle_id)
+        dataToSend.set('channel', channelName)
         axios.post('/battle/load', dataToSend).then(function (response) {
             if (response.data.status === true) {
                 customAlertSuccess('Boats have been set!')
@@ -132,6 +133,14 @@ channel.bind('new-greeting', function (params) {
 
 channel.bind('join', function (params) {
     document.getElementById('vs').innerHTML = params.user1Username + " VS " + params.user2Username;
+});
+
+channel.bind('start', function (params) {
+    if (params.haveUser1BoatsBeenSet && params.haveUser2BoatsBeenSet) {
+        if ((Number(isHost) === 1 && turn === 1) || (Number(isHost) === 0 && turn === 2)) {
+            addEventListenersToGrid()
+        }
+    }
 });
 
 channel.bind('declare_loser', function (params) {
