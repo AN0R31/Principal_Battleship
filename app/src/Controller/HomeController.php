@@ -13,7 +13,9 @@ class HomeController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        if (!$this->getUser()) {
+        $thisUser = $this->getUser();
+
+        if (!$thisUser) {
             return $this->redirectToRoute('app_login');
         }
 
@@ -21,7 +23,10 @@ class HomeController extends AbstractController
 
         $key = 0;
         foreach ($ongoingBattles as $ongoingBattle) {
-            if ($ongoingBattle->getUser2() === null) {
+            $user2 =  $ongoingBattle->getUser2();
+            $user1 =  $ongoingBattle->getUser1();
+
+            if ($user2 === null || $user2 === $thisUser || $user1 === $thisUser) {
                 array_splice($ongoingBattles, $key, 1);
                 $key--;
             }
