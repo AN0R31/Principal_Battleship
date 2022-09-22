@@ -4,7 +4,65 @@ import Pusher from "pusher-js";
 
 turn = turn === 'host' ? 1 : 2; //WHICH USER'S TURN IT IS; 1 -> User1, 2 -> User2; HOST (User1) ALWAYS HAS THE FIRST MOVE!
 
-console.log(turn)
+let status = null;
+
+let isFlipping = false;
+
+function setStatus() {
+    const dataToSend = new FormData()
+    dataToSend.set('battle_id', battle_id)
+    axios.post('/battle/refreshGlobals', dataToSend).then(function (response) {
+        haveBoatsBeenSet = response.data.haveBoatsBeenSet
+        haveOpponentsBoatsBeenSet = response.data.haveOpponentsBoatsBeenSet
+        hasMatchEnded = response.data.hasMatchEnded
+        console.log(response.data)
+
+        if (isFlipping === true) {
+            return null;
+        }
+
+        if (Number(hasMatchEnded) === 1) {
+            status = 'This match has ended!'
+        } else if (Number(haveBoatsBeenSet) === 1 && Number(haveOpponentsBoatsBeenSet) === 1) {
+            if (Number(isHost) === 1) {
+                if (turn === 1) {
+                    status = 'It\'s your turn!'
+                } else {
+                    status = 'Opponent is shooting...'
+                }
+            } else {
+                if (turn === 1) {
+                    status = 'Opponent is shooting...'
+                } else {
+                    status = 'It\'s your turn!'
+                }
+            }
+        } else if (Number(haveBoatsBeenSet) === 0 && Number(haveOpponentsBoatsBeenSet) === 0) {
+            status = 'Waiting for all players to place their boats...'
+        } else if (Number(haveBoatsBeenSet) === 0) {
+            status = 'Waiting for you to place your boats...'
+        } else if (Number(haveOpponentsBoatsBeenSet) === 0){
+            status = 'Waiting for opponent to place his boats...'
+        }
+
+        if (Number(isSpectator) === 1 && Number(haveBoatsBeenSet) === 1 && Number(haveOpponentsBoatsBeenSet) === 1) {
+            if (turn === 1) {
+                status = 'Player 1 is shooting'
+            } else {
+                status = 'Player 2 is shooting'
+            }
+        } else if (Number(isSpectator) === 1) {
+            status = 'Waiting for all players to place their boats...'
+        } else {
+            status = 'Connecting...'
+        }
+
+        console.log(status)
+        document.getElementById('status-box').innerHTML = status
+    })
+}
+
+setStatus()
 
 let opponentCells = document.querySelectorAll(".cells");
 
@@ -27,10 +85,13 @@ if (Number(isSpectator) === 0) {
         dataToSend.set('channel', channelName)
         axios.post('/battle/load', dataToSend).then(function (response) {
             if (response.data.status === true) {
-                customAlertSuccess('Boats have been set!')
+                if (response.data.haveUser1BoatsBeenSet === false || response.data.haveUser2BoatsBeenSet === false)
+                    customAlertSuccess('Boats have been set!')
             } else {
                 customAlertError('Boats have already been set!')
             }
+
+            setStatus()
 
             hideElementById('grid-options')
             hideElementById('boats')
@@ -48,6 +109,8 @@ if (Number(isSpectator) === 0) {
             child.style.display = 'flex'
             child.classList.add('boat-to-select')
         }
+
+        setStatus()
     });
 }
 
@@ -83,11 +146,9 @@ var pusher = new Pusher('7cb53bc01cb5c9f74363', {
 const channel = pusher.subscribe(channelName);
 channel.bind('new-greeting', function (params) {
 
-
     switchTurn()
     adjustEventListenersBasedOnTurn()
-    console.log('TURN: ' + turn)
-    console.log('-------------------------')
+    setStatus()
 
 
     if (Number(isHost) === 1 && params.board === 'hostBoard') {
@@ -127,24 +188,28 @@ channel.bind('new-greeting', function (params) {
                 targetCell.setAttribute('data-hit', "true");
             }
         }
-
     }
 });
 
 channel.bind('join', function (params) {
     document.getElementById('vs').innerHTML = params.user1Username + " VS " + params.user2Username;
+
+    setStatus()
 });
 
 channel.bind('start', function (params) {
     if (params.haveUser1BoatsBeenSet && params.haveUser2BoatsBeenSet) {
 
+        console.log(params)
+
         document.getElementById('coin-flip-container').style.display = 'block';
+        document.getElementById('status-box').innerHTML = 'Flipping coin...'
+        isFlipping = true;
+
 
         let coin = document.querySelector(".coin");
         let i = turn === 1 ? 0 : 1;
 
-        console.log(i)
-        console.log(i)
         coin.style.animation = "none";
         if (i) {
             setTimeout(function () {
@@ -171,13 +236,16 @@ channel.bind('start', function (params) {
 
         function removeCoinFlipModal() {
             document.getElementById('coin-flip-container').style.display = 'none';
+            isFlipping = false;
+            setStatus()
         }
-
 
 
         if ((Number(isHost) === 1 && turn === 1) || (Number(isHost) === 0 && turn === 2)) {
             addEventListenersToGrid()
         }
+    } else {
+        setStatus()
     }
 });
 
@@ -192,6 +260,7 @@ channel.bind('declare_loser', function (params) {
         document.getElementById('vs').innerHTML = 'YOU LOST!';
     }
     removeEventListenersFromGrid();
+    setStatus()
 });
 ///////////////////////////////////////////////////////////////////////
 
@@ -404,18 +473,14 @@ function adjustEventListenersBasedOnTurn() {
     if (Number(isHost) === 1) {
         if (turn === 1) {
             addEventListenersToGrid()
-            console.log('ADDED PLAYER 1 LISTENERS')
         } else {
             removeEventListenersFromGrid()
-            console.log('REMOVED PLAYER 1 LISTENERS')
         }
     } else {
         if (turn === 2) {
             addEventListenersToGrid()
-            console.log('ADDED PLAYER 2 LISTENERS')
         } else {
             removeEventListenersFromGrid()
-            console.log('REMOVED PLAYER 2 LISTENERS')
         }
     }
 }
@@ -458,13 +523,10 @@ function cellEvent(event) {
 }
 
 function addEventListenersToGrid() {
-    console.log('ADDING........')
     for (let cell of opponentCells) {
         cell.addEventListener('click', cellEvent)
     }
 }
-
-console.log(haveBoatsBeenSet, haveOpponentsBoatsBeenSet)
 
 if (Number(hasMatchEnded) === 1 || Number(haveBoatsBeenSet) === 0 || Number(haveOpponentsBoatsBeenSet) === 0) {
     removeEventListenersFromGrid()

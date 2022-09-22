@@ -182,6 +182,20 @@ h3 {
     justify-content: center;
 }
 
+.status-box {
+    padding: 6px 12px;
+    margin-left: auto;
+    margin-right: auto;
+    align-content: center;
+    width: 24vw;
+    height: 6vh;
+    background-color: white;
+    border: 1px solid black;
+
+    text-align: center;
+    font-size: 24px;
+}
+
 
 
 
@@ -253,29 +267,4 @@ h3 {
     100%{
         transform: rotateX(2160deg);
     }
-}
-.buttons{
-    display: flex;
-    justify-content: space-between;
-}
-button{
-    width: 150px;
-    padding: 15px 0;
-    border: none;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-#flip-button{
-    background-color: #053469;
-    color: #ffffff;
-}
-#flip-button:disabled{
-    background-color: #e1e0ee;
-    border-color: #e1e0ee;
-    color: #101020;
-}
-#reset-button{
-    background-color: #674706;
-    color: white;
 }
