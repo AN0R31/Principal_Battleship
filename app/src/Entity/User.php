@@ -35,6 +35,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $username = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $points = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -125,6 +128,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(string $username): self
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    public function getPoints(): ?int
+    {
+        return $this->points;
+    }
+
+    public function setPoints(?int $points): self
+    {
+        $this->points = $points;
+
+        return $this;
+    }
+
+    public function addPoints(?int $points): self
+    {
+        $this->points = $this->getPoints() + $points;
 
         return $this;
     }
