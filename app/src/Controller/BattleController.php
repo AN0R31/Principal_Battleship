@@ -103,7 +103,7 @@ class BattleController extends AbstractController
         $nrShips = $requestParameters->get('ships');
         $nrShots = $requestParameters->get('shots');
 
-        $turn = rand(0,1);
+        $turn = rand(0, 1);
         $turn = $turn === 0 ? 'host' : 'guest';
 
         $battleState = "{\"game\":{\"numberOfBoats\":\"$nrShips\",\"numberOfHits\":\"$nrShots\",\"turn\":\"$turn\",\"hitsLeft\":\"$nrShots\"},\"hostBoard\":{\"boats\":{},\"hitsTaken\":{}},\"guestBoard\":{\"boats\":{},\"hitsTaken\":{}}}";
@@ -226,6 +226,7 @@ class BattleController extends AbstractController
     #[Route('/battle/hit', name: 'hit', methods: ['post'])]
     public function hit(Pusher $pusher, Request $request, EntityManagerInterface $entityManager): Response
     {
+        $player = $this->getUser();
         $coordinates = explode(" ", $request->request->get('hit'));
 
         $battle = $entityManager->getRepository(Battle::class)->findOneBy([
@@ -234,7 +235,7 @@ class BattleController extends AbstractController
 
         $battleState = json_decode($battle->getBattleState());
 
-        $board = $this->getUser()->getId() === $battle->getUser1()->getId() ? 'guestBoard' : 'hostBoard';
+        $board = $player->getId() === $battle->getUser1()->getId() ? 'guestBoard' : 'hostBoard';
         $user = $board === 'guestBoard' ? 'host' : 'guest';
         $gameSettings = $battleState->game;
 
@@ -287,6 +288,18 @@ class BattleController extends AbstractController
             }
         }
 
+        /////////////////////////////ADD POINTS/////////////////////////////////
+        if ($isHit) {
+            if ($this->getUser() === $battle->getUser1())
+                $battle->setUser1Points($battle->getUser1Points() + 1);
+            else
+                $battle->setUser2Points($battle->getUser2Points() + 1);
+
+            $player->addPoints(1);
+            $entityManager->persist($player);
+        }
+        ///////////////////////////////////////////////////////////////////////
+
         $battleState->{$board}->hitsTaken->{$nrOfHits}->isHit = $isHit;
 
         $battleState = json_encode($battleState);
@@ -305,8 +318,28 @@ class BattleController extends AbstractController
             "id" => $request->request->get('battle_id'),
         ]);
 
-        $battle->setWinner($this->getUser());
+        $winner = $this->getUser();
+        $loser = $winner === $battle->getUser1() ? $battle->getUser2() : $battle->getUser1();
+
+        ///////////////////////////ADD POINTS///////////////////////////////
+        if ($winner === $battle->getUser1()) {
+            $battle->setUser1Points($battle->getUser1Points() + 50);
+            $battle->setUser2Points($battle->getUser2Points() + 5);
+        } else {
+            $battle->setUser2Points($battle->getUser2Points() + 50);
+            $battle->setUser1Points($battle->getUser1Points() + 5);
+        }
+
+        $winner->addPoints(50);
+        $entityManager->persist($winner);
+
+        $loser->addPoints(5);
+        $entityManager->persist($loser);
+        //////////////////////////////////////////////////////////////////
+
+        $battle->setWinner($winner);
         $entityManager->persist($battle);
+
         $entityManager->flush();
 
         $pusher->trigger($request->request->get('channel'), 'declare_loser', ['isHostWinner' => $battle->getUser1()->getId() === $this->getUser()->getId(), 'winner' => $battle->getWinner()->getUsername()]);
@@ -314,7 +347,7 @@ class BattleController extends AbstractController
     }
 
     #[Route('/battle/refreshGlobals', name: 'refreshGlobals', methods: ['post'])]
-    public function refreshGlobals(Pusher $pusher, Request $request, EntityManagerInterface $entityManager): Response
+    public function refreshGlobals(Request $request, EntityManagerInterface $entityManager): Response
     {
         $battle = $entityManager->getRepository(Battle::class)->findOneBy([
             "id" => $request->request->get('battle_id'),
