@@ -169,7 +169,7 @@ class BattleController extends AbstractController
     }
 
     #[Route('/battle/load', name: 'load_battle', methods: ['post'])]
-    public function load(Request $request, EntityManagerInterface $entityManager, JoinBattleService $service): Response
+    public function load(Pusher $pusher, Request $request, EntityManagerInterface $entityManager, JoinBattleService $service): Response
     {
         $requestParameters = $request->request;
 
@@ -197,6 +197,18 @@ class BattleController extends AbstractController
                     $battleState->{$board}->boats->{$boatNr}->coordinates->posY = str_split($params[0])[0];
                 }
             }
+
+            if ($board === 'hostBoard') {
+                $haveUser1BoatsBeenSet = true;
+                $haveUser2BoatsBeenSet = isset($battleState->{'guestBoard'}->boats->{1});
+            } else {
+                $haveUser2BoatsBeenSet = true;
+                $haveUser1BoatsBeenSet = isset($battleState->{'hostBoard'}->boats->{1});
+            }
+
+            //dd($battleState->{'guestBoard'}->boats->{1}, $battleState->{'hostBoard'}->boats->{1});
+
+            $pusher->trigger($request->request->get('channel'), 'start', ['haveUser1BoatsBeenSet' => $haveUser1BoatsBeenSet, 'haveUser2BoatsBeenSet' => $haveUser2BoatsBeenSet]);
 
             $battleState = json_encode($battleState);
             $battle->setBattleState($battleState);
