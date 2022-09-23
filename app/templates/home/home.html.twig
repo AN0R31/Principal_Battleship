@@ -5,56 +5,319 @@
 
 {% block body %}
 
-    <div style="display: flex; justify-content: center">
-        <div id="modal-create-match" class="modal-create-match">
-            <h3>Create Match</h3>
 
-            <div id="modal-close-button" class="modal-close-button">X</div>
+<div style="display: flex; justify-content: center">
+    <div id="modal-create-match" class="modal-create-match">
+        <h3>Create Match</h3>
 
-            <div class="form-create-match" id="form-create-match">
+        <div id="modal-close-button" class="modal-close-button">X</div>
 
-                <div id="form-section-ships-create-match" class="form-section-create-match">
-                    <div data-value="3" class="form-select-button-create-match">3 ships</div>
-                    <div data-value="5" class="form-select-button-create-match">5 ships</div>
-                    <div data-value="7" class="form-select-button-create-match">7 ships</div>
-                </div>
-                <br>
+        <div class="form-create-match" id="form-create-match">
 
-                <div id="form-section-shots-create-match" class="form-section-create-match">
-                    <div data-value="1" class="form-select-button-create-match">1 shot&nbsp;</div>
-                    <div data-value="3" class="form-select-button-create-match">3 shots</div>
-                    <div data-value="5" class="form-select-button-create-match">5 shots</div>
-                </div>
+            <div id="form-section-ships-create-match" class="form-section-create-match">
+                <div data-value="3" class="form-select-button-create-match">3 ships</div>
+                <div data-value="5" class="form-select-button-create-match">5 ships</div>
+                <div data-value="7" class="form-select-button-create-match">7 ships</div>
+            </div>
+            <br>
 
-                <div id="button-submit-create-match" class="button-submit-create-match">
-                    START
-                </div>
+            <div id="form-section-shots-create-match" class="form-section-create-match">
+                <div data-value="1" class="form-select-button-create-match">1 shot&nbsp;</div>
+                <div data-value="3" class="form-select-button-create-match">3 shots</div>
+                <div data-value="5" class="form-select-button-create-match">5 shots</div>
+            </div>
+
+            <div id="button-submit-create-match" class="button-submit-create-match">
+                START
             </div>
         </div>
     </div>
+</div>
 
-    <h1>BATTLESHIP</h1>
+<h1>BATTLESHIP</h1>
 
-    <div class="matches">
-        <div class="ongoing-battles" style="margin-top: 15vh">
-            {% for ongoingBattle in ongoingBattles %}
-                <p class="battle-title">Battle #{{ ongoingBattle.id }}</p>
-                <a href="/battle?battle_id={{ ongoingBattle.id }}&password={{ ongoingBattle.password }}">
-                    <div class="button-spectate">WATCH</div>
-                </a>
-                <p class="battle-participants">{{ ongoingBattle.user1.username }}
-                    VS {{ ongoingBattle.user2.username }}</p>
-            {% endfor %}
+{#    <div class="matches"> #}
+    {#        <div class="ongoing-battles" style="margin-top: 15vh"> #}
+    {#            {% for ongoingBattle in ongoingBattles %} #}
+    {#                <p class="battle-title">Battle #{{ ongoingBattle.id }}</p> #}
+    {#                <a href="/battle?battle_id={{ ongoingBattle.id }}&password={{ ongoingBattle.password }}"> #}
+    {#                    <div class="button-spectate">WATCH</div> #}
+    {#                </a> #}
+    {#                <p class="battle-participants">{{ ongoingBattle.user1.username }} #}
+    {#                    VS {{ ongoingBattle.user2.username }}</p> #}
+    {#            {% endfor %} #}
+    {#        </div> #}
+    {#    </div> #}
+
+
+<div class="main-container">
+    {#        <div class="main"> #}
+    <div class="leaderboard-container">
+        <div class="leaderboard">
+            <table>
+                <tr>
+                    <th>
+                        Place
+                    </th>
+                    <th>
+                        User
+                    </th>
+                    <th>
+                        Matches Played
+                    </th>
+                    <th>
+                        Points
+                    </th>
+                </tr>
+                {% for leaderboard in leaderboards %}
+                <tr class="driver">
+                    <td class="position">{{ loop.index }}</td>
+                    <td class="driver" style="border-left: 4px solid rgb(0, 210, 190);">
+                        {% if loop.index == 1 %}
+                            🏆
+                        {% elseif loop.index == 2 %}
+                            🥈
+                        {% elseif loop.index == 3 %}
+                            🥉
+                        {% else %}
+                            🥹
+                        {% endif %}
+                        <strong>{{ leaderboard.username }}</strong>
+                    </td>
+                    <td><span>982</span></td>
+                    <td class="gap"><span>{{ leaderboard.points }}</span></td>
+                </tr>
+                {% endfor %}
+                {#                    <tr class="driver"> #}
+                {#                        <td class="position">2</td> #}
+                {#                        <td class="driver" style="border-left: 4px solid rgb(210,0,73);">Valteri #}
+                {#                            <strong>Bottas</strong> #}
+                {#                        </td> #}
+                {#                        <td><span>782</span></td> #}
+                {#                        <td class="gap"><span>10652</span></td> #}
+                {#                    </tr> #}
+            </table>
         </div>
     </div>
+    <div class="matches">
+        <div class="buttons">
+            <div id="button-create-match" class="button-create-match raise">Create</div>
+            <div id="button-join-match" class="button-create-match raise">Join</div>
+        </div>
 
-    <div id="button-create-match" class="button-create-match">Create Match</div>
+        <div class="matches-container-title">Public Matches</div>
+        <div class="matches-container">
+            {% for ongoingBattle in ongoingBattles %}
+                <a href="/battle?battle_id={{ ongoingBattle.id }}&password={{ ongoingBattle.password }}">
+                    <div class="match pulse">
+                        <p class="battle-title">Battle #{{ ongoingBattle.id }}</p>
+                        {#                    <a href="/battle?battle_id={{ ongoingBattle.id }}&password={{ ongoingBattle.password }}"> #}
+                        {#                        <div class="button-spectate">WATCH</div> #}
+                        {#                    </a> #}
+                        <p class="battle-participants">{{ ongoingBattle.user1.username }}
+                            VS {{ ongoingBattle.user2.username }}</p>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
 
-    <div class="menu-line"></div>
+        <div class="matches-container-title">Live Matches</div>
+        <div class="matches-container">
+            {% for ongoingBattle in ongoingBattles %}
+                <a href="/battle?battle_id={{ ongoingBattle.id }}&password={{ ongoingBattle.password }}">
+                    <div class="match">
+                        <p class="battle-title">Battle #{{ ongoingBattle.id }}</p>
+                        {#                    <a href="/battle?battle_id={{ ongoingBattle.id }}&password={{ ongoingBattle.password }}"> #}
+                        {#                        <div class="button-spectate">WATCH</div> #}
+                        {#                    </a> #}
+                        <p class="battle-participants">{{ ongoingBattle.user1.username }}
+                            VS {{ ongoingBattle.user2.username }}</p>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
 
-    <div id="button-join-match" class="button-create-match join">Join Match</div>
+    </div>
+    {#        </div> #}
+</div>
 
-    <div class="matches-line" style="margin-top: 12vh"></div>
+{#    <div id="button-create-match" class="button-create-match">Create Match</div> #}
 
-    <div class="matches-line" style="margin-top: 44vh"></div>
+    {#    <div class="menu-line"></div> #}
+
+    {#    <div id="button-join-match" class="button-create-match join">Join Match</div> #}
+
+    {#    <div class="matches-line" style="margin-top: 12vh"></div> #}
+
+    {#    <div class="matches-line" style="margin-top: 44vh"></div> #}
+
+<script>
+    // array describing the color for each team
+    // using camel case where the team names include a space
+    const colors = {
+        mercedes: '#00D2BE',
+        ferrari: '#DC0000',
+        redBull: '#1E41FF',
+        renault: '#FFF500',
+        racingPoint: '#F596C8',
+        alfaRomeo: '#9B0000',
+        toroRosso: '#469BFF',
+        haas: '#BD9E57',
+        mclaren: '#FF8700',
+        williams: '#FFFFFF'
+    }
+
+    // array describing the drivers, sorted by position and with a gap describing the distance from the leading driver
+    const leaderboard = [
+        {
+            name: 'Lewis Hamilton',
+            team: 'mercedes',
+            gap: 'Leader'
+        },
+        {
+            name: 'Valteri Bottas',
+            team: 'mercedes',
+            gap: '+6.552s'
+        },
+        {
+            name: 'Sebastian Vettel',
+            team: 'ferrari',
+            gap: '+13.744s'
+        },
+        {
+            name: 'Max Verstappen',
+            team: 'red bull',
+            gap: '+27.627s'
+        },
+        {
+            name: 'Charles Leclerc',
+            team: 'ferrari',
+            gap: '+31.627s'
+        },
+        {
+            name: 'Pierre Gasly',
+            team: 'red bull',
+            gap: '+89.307s'
+        },
+        {
+            name: 'Daniel Ricciardo',
+            team: 'renault',
+            gap: '+1 lap'
+        }, {
+            name: 'Sergio Perez',
+            team: 'racing point',
+            gap: '+1 lap'
+        },
+        {
+            name: 'Kimi Räikkönen',
+            team: 'alfa romeo',
+            gap: '+1 lap'
+        },
+        {
+            name: 'Alexander Albon',
+            team: 'toro rosso',
+            gap: '+1 lap'
+        },
+        {
+            name: 'Romain Grosjean',
+            team: 'haas',
+            gap: '+1 lap'
+        },
+        {
+            name: 'Lance Stroll',
+            team: 'racing point',
+            gap: '+1 lap'
+        },
+        {
+            name: 'Kevin Magnussen',
+            team: 'haas',
+            gap: '+1 lap'
+        },
+        {
+            name: 'Carlos Sainz',
+            team: 'mclaren',
+            gap: '+1 lap'
+        },
+        {
+            name: 'Antonio Giovinazzi',
+            team: 'alfa romeo',
+            gap: '+1 lap'
+        },
+        {
+            name: 'George Russell',
+            team: 'williams',
+            gap: '+2 laps'
+        },
+        {
+            name: 'Robert Kubica',
+            team: 'williams',
+            gap: '+2 laps'
+        },
+        {
+            name: 'Lando Norris',
+            team: 'mclaren',
+            gap: 'DNF'
+        },
+        {
+            name: 'Daniil Kvyat',
+            team: 'toro rosso',
+            gap: 'DNF'
+        },
+        {
+            name: 'Nico Hulkenberg',
+            team: 'renault',
+            gap: 'DNF'
+        }
+    ];
+
+    // target the table element in which to add one div for each driver
+    const main = d3
+        .select('table');
+
+    // for each driver add one table row
+    // ! add a class to the row to differentiate the rows from the existing one
+    // otherwise the select method would target the existing one and include one row less than the required amount
+    const drivers = main
+        .selectAll('tr.driver')
+        .data(leaderboard)
+        .enter()
+        .append('tr')
+        .attr('class', 'driver');
+
+    // in each row add the information specified by the dataset in td elements
+    // specify a class to style the elements differently with CSS
+
+    // position using the index of the data points
+    drivers
+        .append('td')
+        .text((d, i) => i + 1)
+        .attr('class', 'position');
+
+
+    // name followed by the team
+    drivers
+        .append('td')
+        // include the last name in a separate element to style it differently
+        // include the team also in another element for the same reason
+        .html(({
+                   name,
+                   team
+               }) => `${name.split(' ').map((part, index) => index > 0 ? `<strong>${part}</strong>` : `${part}`).join(' ')} <span>${team}</span>`)
+        // include a border with the color matching the team
+        .style('border-left', ({team}) => {
+            // find the color using the string value found in d.team
+            // ! if the string value has a space, camelCase the value
+            const color = team.split(' ').map((word, index) => index > 0 ? `${word[0].toUpperCase()}${word.slice(1)}` : `${word}`).join('');
+            return `4px solid ${colors[color]}`;
+        })
+        .attr('class', 'driver');
+
+    // gap from the first driver
+    drivers
+        .append('td')
+        .attr('class', 'gap')
+        .append('span')
+        .text(({gap}) => gap);
+</script>
+
 {% endblock %}

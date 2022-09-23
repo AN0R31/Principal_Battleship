@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Battle;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,8 +34,10 @@ class HomeController extends AbstractController
             $key++;
         }
 
-        array_splice($ongoingBattles, 4, sizeof($ongoingBattles));
+        $leaderboards = $entityManager->getRepository(User::class)->findBy([], array('points' => 'DESC'), 15);
 
-        return $this->render('home/home.html.twig', ['ongoingBattles' => $ongoingBattles]);
+        //array_splice($leaderboards, 15, sizeof($leaderboards));
+
+        return $this->render('home/home.html.twig', ['ongoingBattles' => $ongoingBattles, 'leaderboards' => $leaderboards]);
     }
 }
