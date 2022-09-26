@@ -331,9 +331,11 @@ class BattleController extends AbstractController
         }
 
         $winner->addPoints(50);
+        $winner->addMatches(1);
         $entityManager->persist($winner);
 
         $loser->addPoints(5);
+        $loser->addMatches(1);
         $entityManager->persist($loser);
         //////////////////////////////////////////////////////////////////
 
