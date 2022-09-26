@@ -38,6 +38,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?int $points = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $matches = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -62,7 +65,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -147,6 +150,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function addPoints(?int $points): self
     {
         $this->points = $this->getPoints() + $points;
+
+        return $this;
+    }
+
+    public function getMatches(): ?int
+    {
+        return $this->matches;
+    }
+
+    public function setMatches(?int $matches): self
+    {
+        $this->matches = $matches;
+
+        return $this;
+    }
+
+    public function addMatches(int $matches): self
+    {
+        $this->matches = $this->getMatches() + $matches;
 
         return $this;
     }
