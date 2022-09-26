@@ -39,8 +39,8 @@
         <div class="leaderboard-container">
             <div class="leaderboard">
                 <h3 style="margin: 0 0; padding: 0 0;">Leaderboard</h3>
-                <table>
-                    <tr>
+                <table style="overflow-y: auto; height: 40%; ">
+                    <tr style="position: marker">
                         <th>
                             Place
                         </th>
@@ -73,6 +73,8 @@
                             <td class="gap"><span>{{ leaderboard.points }}</span></td>
                         </tr>
                     {% endfor %}
+                </table>
+                <table style="overflow-y: auto; height: auto">
                     <tr>
                         <th>
                             <h3 style="font-size: 20px; white-space: nowrap; margin: 0 0; justify-content: space-evenly; width: 600%">
