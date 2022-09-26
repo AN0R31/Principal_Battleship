@@ -69,16 +69,6 @@
         {% else %}
             <h3 id="vs">{{ status }}</h3>
         {% endif %}
-        <div id="grid-options" class="grid-options">
-            <div id="send-or-reset" class="send-or-reset">
-                <div id="send" class="boats-button">Send</div>
-                <div id="reset-board" class="boats-button">Reset</div>
-            </div>
-            <div id="vertical-checkbox" class="vertical-checkbox">
-                <p>Vertical:</p>
-                <input type="checkbox" id="vertical" name="vertical" value="{{ 0 }}">
-            </div>
-        </div>
     {% endif %}
 
     <div id="status-box" class="status-box">
@@ -96,10 +86,7 @@
             {% for i in 0..9 %}
                 <ul style="display: flex;list-style: none;margin: 0; justify-content: center">
                     {% for j in 0..9 %}
-                        <li id="{{ "#{i}#{j}" }}" class="cell"
-                            style="background-color: gray; width: 50px;height: 50px;display: flex;justify-content: center;align-items: center;border: 1px solid black"
-                        >0
-                        </li>
+                        <li id="{{ "#{i}#{j}" }}" class="cell">0</li>
                     {% endfor %}
                 </ul>
             {% endfor %}
@@ -114,10 +101,7 @@
             {% for i in 0..9 %}
                 <ul style="display: flex;list-style: none;margin: 0; justify-content: center">
                     {% for j in 0..9 %}
-                        <li id="{{ "#{i} #{j}" }}" class="cells"
-                            style="background-color: gray; width: 50px;height: 50px;display: flex;justify-content: center;align-items: center;border: 1px solid black"
-                        >0
-                        </li>
+                        <li id="{{ "#{i} #{j}" }}" class="cells">0</li>
                     {% endfor %}
                 </ul>
             {% endfor %}
@@ -133,12 +117,22 @@
                          data-size="{{ boatSizes[i-1] }}"
                          data-position="{{ "false" }}">
                         {% for j in 1..boatSizes[i-1] %}
-                            <div class="ship"
-                                 style="width: 50px;height: 50px; border: 1px solid white;display: flex;justify-content: center;align-items: center">{{ i }}</div>
+                            <div class="ship">{{ i }}</div>
                         {% endfor %}
                     </div>
                 </div>
             {% endfor %}
+
+            <div id="grid-options" class="grid-options">
+                <div id="vertical-checkbox" class="vertical-checkbox">
+                    <p>Vertical:</p>
+                    <input type="checkbox" id="vertical" name="vertical" value="{{ 0 }}">
+                </div>
+                <div id="send-or-reset" class="send-or-reset">
+                    <div id="send" class="boats-button">Send</div>
+                    <div id="reset-board" class="boats-button">Reset</div>
+                </div>
+            </div>
         </div>
     {% endif %}
 
