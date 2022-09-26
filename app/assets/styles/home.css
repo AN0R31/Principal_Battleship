@@ -185,6 +185,7 @@ h3 {
 }
 
 .vertical-checkbox {
+    margin-top: -45px;
     display: inline-flex;
     justify-content: center;
 }
@@ -194,7 +195,7 @@ h3 {
     margin-left: auto;
     margin-right: auto;
     align-content: center;
-    width: 24vw;
+    width: 35vw;
     height: 6vh;
     background-color: white;
     border: 1px solid black;
@@ -227,6 +228,84 @@ h3 {
 /*    background-color: black;*/
 /*    border: 1px solid black;*/
 /*}*/
+
+.ship {
+    background-size: 100% 100%;
+    width: 50px;
+    height: 50px;
+    border: 1px solid white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cells {
+    background-image: url(/public/img/water.png);
+    background-size: 200% 200%;
+    color: dodgerblue;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid dodgerblue;
+}
+
+.cell {
+    background-image: url(/public/img/water.png);
+    background-size: 200% 200%;
+    color: dodgerblue;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid dodgerblue;
+}
+
+@media (max-width: 1200px) {
+    .ship {
+        width: 40px;
+        height: 40px;
+    }
+
+    .cell {
+        width: 40px;
+        height: 40px;
+    }
+
+    .cells {
+        width: 40px;
+        height: 40px;
+    }
+
+    .status-box {
+        font-size: 20px;
+        width: 40vw;
+    }
+}
+
+@media (max-width: 950px) {
+    .ship {
+        width: 30px;
+        height: 30px;
+    }
+
+    .cell {
+        width: 30px;
+        height: 30px;
+    }
+
+    .cells {
+        width: 30px;
+        height: 30px;
+    }
+
+    .status-box {
+        font-size: 16px;
+        width: 50vw;
+    }
+}
 
 
 .main-container {
@@ -392,7 +471,6 @@ table {
 }
 
 
-
 /* center every element nested in a table row */
 table tr > * {
     text-align: center;
@@ -493,15 +571,6 @@ table td span {
         width: 97%;
     }
 }
-
-
-
-
-
-
-
-
-
 
 
 .coin-flip-container {

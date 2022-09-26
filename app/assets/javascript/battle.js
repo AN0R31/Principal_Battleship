@@ -355,7 +355,7 @@ for (let cell of cells) {
                         let cellId = cell.getAttribute('id')[0] + (Number(cell.getAttribute('id')[1]) + i)
 
                         document.getElementById(cellId).innerHTML = dragged.getAttribute('id')[5]
-                        document.getElementById(cellId).style.backgroundColor = 'black'
+                        document.getElementById(cellId).style.backgroundImage = "url('/public/img/boat.jpg')"
                         document.getElementById(cellId).style.color = 'white'
                     }
                     let startingCellOfBoat = cell.getAttribute('id')[0] + (Number(cell.getAttribute('id')[1]))
@@ -375,7 +375,7 @@ for (let cell of cells) {
                         let cellId = (Number(cell.getAttribute('id')[0]) + i) + cell.getAttribute('id')[1]
 
                         document.getElementById(cellId).innerHTML = dragged.getAttribute('id')[5]
-                        document.getElementById(cellId).style.backgroundColor = 'black'
+                        document.getElementById(cellId).style.backgroundImage = "url('/public/img/boat.jpg')"
                         document.getElementById(cellId).style.color = 'white'
                     }
                     let startingCellOfBoat = (Number(cell.getAttribute('id')[0])) + cell.getAttribute('id')[1]
@@ -414,7 +414,7 @@ function loadBoats() {
                 let coordX = Number(loadedBoats[boatNr].coordinates.posX) + Number(j * deltaX);
                 let cell = document.getElementById(coordY + "" + coordX);
                 cell.innerHTML = boatNr
-                cell.style.backgroundColor = 'black'
+                cell.style.backgroundImage = "url('/public/img/boat.jpg')"
                 cell.style.color = 'white'
             }
 
