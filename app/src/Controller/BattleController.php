@@ -49,6 +49,9 @@ class BattleController extends AbstractController
 
         if ($battle->getUser2() === null) {
             $status = 'Waiting for opponent...';
+            if (!$service->isLoggedUserSameAsGiven($battle->getUser1())) {
+                return $this->forward('App\Controller\BattleController::joinBattle', ['password' => $battle->getPassword()]);
+            }
         } else if (!$service->isLoggedUserSameAsGiven($battle->getUser1()) && !$service->isLoggedUserSameAsGiven($battle->getUser2())) {
             $isUserSpectator = true;
             $user2Username = $battle->getUser2()->getUsername();
@@ -102,6 +105,7 @@ class BattleController extends AbstractController
 
         $nrShips = $requestParameters->get('ships');
         $nrShots = $requestParameters->get('shots');
+        $public = $requestParameters->get('public') === 'true' ? 1 : 0;
 
         $turn = rand(0, 1);
         $turn = $turn === 0 ? 'host' : 'guest';
@@ -114,6 +118,7 @@ class BattleController extends AbstractController
         $battle->setUser1($this->getUser());
         $battle->setPassword($service->matchPassword());
         $battle->setBattleState($battleState);
+        $battle->setPublic($public);
 
         try {
             $entityManager->persist($battle);
@@ -134,7 +139,8 @@ class BattleController extends AbstractController
     #[Route('/battle/join', name: 'join_battle', methods: ['post'])]
     public function joinBattle(Pusher $pusher, Request $request, EntityManagerInterface $entityManager, JoinBattleService $service): Response
     {
-        $givenPassword = $request->request->get('password');
+        $givenPassword = $request->request->get('password') ?? $request->attributes->get('password');
+
         $battle = $entityManager->getRepository(Battle::class)->findOneBy(['password' => $givenPassword]);
 
         if ($battle === null) {
@@ -146,7 +152,7 @@ class BattleController extends AbstractController
         }
 
         if ($battle->getUser2() === null) {
-            if ($givenPassword === $battle->getPassword()) { ////USELESS, WE ALREADY SEARCH BY PASSWORD
+            if ($givenPassword === $battle->getPassword()) { ////USELESS, WE ALREADY SEARCHED BY PASSWORD
 
                 $battle->setUser2($this->getUser());
 
@@ -155,10 +161,13 @@ class BattleController extends AbstractController
 
                 $pusher->trigger(strval($battle->getId()), 'join', ['user1Username' => $battle->getUser1()->getUsername(), 'user2Username' => $battle->getUser2()->getUsername()]);
 
-                return new JsonResponse([
-                    'status' => true,
-                    'battle_id' => $battle->getId(),
-                ]);
+                if ($request->request->get('password'))
+                    return new JsonResponse([
+                        'status' => true,
+                        'battle_id' => $battle->getId(),
+                    ]);
+                else
+                    Header("Location: /battle?battle_id={$battle->getId()}&password=$givenPassword");
             }
         } else if ($service->isLoggedUserSameAsGiven($battle->getUser2())) {
             return new JsonResponse([

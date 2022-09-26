@@ -27,6 +27,11 @@
                     <div data-value="5" class="form-select-button-create-match">5 shots</div>
                 </div>
 
+                <div style="margin: auto; text-align: center">
+                    Public
+                    <input id="public" type="checkbox" value="false">
+                </div>
+
                 <div id="button-submit-create-match" class="button-submit-create-match">
                     START
                 </div>
@@ -69,7 +74,7 @@
                                 {% endif %}
                                 <strong>{{ leaderboard.username }}</strong>
                             </td>
-                            <td><span>982</span></td>
+                            <td><span>{{ leaderboard.matches }}</span></td>
                             <td class="gap"><span>{{ leaderboard.points }}</span></td>
                         </tr>
                     {% endfor %}
@@ -138,12 +143,11 @@
 
             <div class="matches-container-title">Public Matches</div>
             <div class="matches-container">
-                {% for ongoingBattle in ongoingBattles %}
-                    <a href="/battle?battle_id={{ ongoingBattle.id }}&password={{ ongoingBattle.password }}">
+                {% for match in matchesMissingAPlayer %}
+                    <a href="/battle?battle_id={{ match.id }}&password={{ match.password }}">
                         <div class="match pulse">
-                            <p class="battle-title">Battle #{{ ongoingBattle.id }}</p>
-                            <p class="battle-participants">{{ ongoingBattle.user1.username }}
-                                VS {{ ongoingBattle.user2.username }}</p>
+                            <p class="battle-title">Battle #{{ match.id }}</p>
+                            <p class="battle-participants">{{ match.user1.username }} is waiting...</p>
                         </div>
                     </a>
                 {% endfor %}
