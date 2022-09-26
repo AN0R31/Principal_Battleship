@@ -53,6 +53,9 @@ class Battle
     #[ORM\Column(type: Types::TEXT)]
     private ?string $battle_state = null;
 
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $public = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -202,6 +205,18 @@ class Battle
     public function setBattleState(string $battle_state): self
     {
         $this->battle_state = $battle_state;
+
+        return $this;
+    }
+
+    public function getPublic(): ?int
+    {
+        return $this->public;
+    }
+
+    public function setPublic(int $public): self
+    {
+        $this->public = $public;
 
         return $this;
     }

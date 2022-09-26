@@ -55,15 +55,17 @@ for (let shotsButton of shotsButtons) {
 submitModalButton.addEventListener("click", ev => {
     let selectedShipsButton = document.getElementsByClassName('selected-ship')
     let selectedShotsButton = document.getElementsByClassName('selected-shot')
+    let publicElement = document.getElementById('public');
 
     if (selectedShipsButton.item(0) !== null && selectedShotsButton.item(0) !== null) {
         let numberOfShots = selectedShotsButton.item(0).getAttribute('data-value')
         let numberOfShips = selectedShipsButton.item(0).getAttribute('data-value')
+        let visibility = publicElement.checked;
 
         const dataToSend = new FormData()
         dataToSend.set('ships', numberOfShips)
         dataToSend.set('shots', numberOfShots)
-
+        dataToSend.set('public', visibility)
         axios.post(
             '/battle/create',
             dataToSend,
