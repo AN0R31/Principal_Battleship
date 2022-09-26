@@ -22,6 +22,23 @@ class HomeController extends AbstractController
 
         $ongoingBattles = $entityManager->getRepository(Battle::class)->findBy(['winner_id' => null], array('id' => 'DESC'), 100);
 
+        $lastMatches = $entityManager->getRepository(Battle::class)->findBy(['user1_id' => $thisUser], array('id' => 'DESC'));
+
+        $lastMatches += $entityManager->getRepository(Battle::class)->findBy(['user2_id' => $thisUser], array('id' => 'DESC'));
+
+        $key = 0;
+        foreach ($lastMatches as $lastMatch) {
+            $winner =  $lastMatch->getWinner();
+
+            if ($winner === null) {
+                array_splice($lastMatches, $key, 1);
+                $key--;
+            }
+            $key++;
+        }
+
+        array_splice($lastMatches, 5, sizeof($lastMatches));
+
         $key = 0;
         foreach ($ongoingBattles as $ongoingBattle) {
             $user2 =  $ongoingBattle->getUser2();
@@ -34,10 +51,8 @@ class HomeController extends AbstractController
             $key++;
         }
 
-        $leaderboards = $entityManager->getRepository(User::class)->findBy([], array('points' => 'DESC'), 15);
+        $leaderboards = $entityManager->getRepository(User::class)->findBy([], array('points' => 'DESC'), 10);
 
-        //array_splice($leaderboards, 15, sizeof($leaderboards));
-
-        return $this->render('home/home.html.twig', ['ongoingBattles' => $ongoingBattles, 'leaderboards' => $leaderboards]);
+        return $this->render('home/home.html.twig', ['ongoingBattles' => $ongoingBattles, 'leaderboards' => $leaderboards, 'lastMatches' => $lastMatches]);
     }
 }
