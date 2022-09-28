@@ -10,7 +10,7 @@ import stars from '/public/img/stars.jpg'
 import scraps from '/public/img/scraps.png'
 import blackHole from '/public/img/blackHole.gif'
 
-turn = turn === 'host' ? 1 : 2; //WHICH USER'S TURN IT IS; 1 -> User1, 2 -> User2; HOST (User1) ALWAYS HAS THE FIRST MOVE!
+turn = turn === 'host' ? 1 : 2; //WHICH USER'S TURN IT IS; 1 -> User1, 2 -> User2;
 
 let status = null;
 
@@ -161,7 +161,7 @@ var pusher = new Pusher('7cb53bc01cb5c9f74363', {
 const channel = pusher.subscribe(channelName);
 channel.bind('new-greeting', function (params) {
 
-    switchTurn()
+    turn = params.turn === 'host' ? 1 : 2;
     adjustEventListenersBasedOnTurn()
     setStatus()
 
@@ -530,10 +530,6 @@ function removeEventListenersFromGrid() {
     }
 }
 
-function switchTurn() {
-    turn = turn === 1 ? 2 : 1;
-}
-
 function adjustEventListenersBasedOnTurn() {
     if (Number(isHost) === 1) {
         if (turn === 1) {
@@ -553,6 +549,7 @@ function adjustEventListenersBasedOnTurn() {
 if ((Number(isHost) === 1 && turn === 1) || (Number(isHost) === 0 && turn === 2)) {
     addEventListenersToGrid()
 }
+
 
 function cellEvent(event) {
     let cell = event.currentTarget;
@@ -586,8 +583,7 @@ function cellEvent(event) {
                 dataToSendToEnd.set('battle_id', battle_id)
                 dataToSendToEnd.set('channel', channelName)
                 axios.post("/battle/end", dataToSendToEnd)
-                //     .then(function (response) {
-                // });
+
             }
 
         });
