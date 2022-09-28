@@ -2,9 +2,7 @@
 
 {% block title %}BATTLESHIP!{% endblock %}
 
-
 {% block body %}
-
 
     <div style="display: flex; justify-content: center">
         <div id="modal-create-match" class="modal-create-match">
@@ -79,59 +77,74 @@
                         </tr>
                     {% endfor %}
                 </table>
+                {% if lastMatches|length > 0 %}
+                    <table style="overflow-y: auto; height: auto">
+                        <tr>
+                            <th>
+                                <h3 style="font-size: 20px; white-space: nowrap; margin: 0 0; justify-content: space-evenly; width: 600%">
+                                    My Matches</h3></th>
+                        </tr>
+
+                        <tr>
+                            <th>
+
+                            </th>
+                            <th>
+                                Participants
+                            </th>
+                            <th>
+                                Outcome
+                            </th>
+                            <th>
+                                Points
+                            </th>
+                        </tr>
+
+                        {% for lastMatch in lastMatches %}
+                            <tr class="driver">
+                                <td class="position">
+                                    {% if app.user.id == lastMatch.winner.id %}
+                                        🏆
+                                    {% else %}
+                                        ❌
+                                    {% endif %}
+                                </td>
+                                {% if app.user.id == lastMatch.winner.id %}
+                                <td class="driver" style="border-left: 4px solid yellowgreen; white-space: nowrap">
+                            {% else %}
+                                <td class="driver" style="border-left: 4px solid rgb(194,0,0); white-space: nowrap">
+                                    {% endif %}
+                                    {% if app.user == lastMatch.user1 %}
+                                        <strong>{{ lastMatch.user1.username }}</strong> VS {{ lastMatch.user2.username }}
+                                    {% else %}
+                                        {{ lastMatch.user1.username }} VS
+                                        <strong>{{ lastMatch.user2.username }}</strong>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if app.user.id == lastMatch.winner.id %}
+                                        <span style="color: yellowgreen">WIN</span>
+                                    {% else %}
+                                        <span>LOSE</span>
+                                    {% endif %}
+                                </td>
+                                {% if app.user.id == lastMatch.user1.id %}
+                                    <td class="gap"><span>{{ lastMatch.getUser1Points() }}</span></td>
+                                {% else %}
+                                    <td class="gap"><span>{{ lastMatch.getUser2Points() }}</span></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    {% else %}
                 <table style="overflow-y: auto; height: auto">
                     <tr>
-                        <th>
-                            <h3 style="font-size: 20px; white-space: nowrap; margin: 0 0; justify-content: space-evenly; width: 600%">
-                                My Matches</h3></th>
+                        <th></th><th>
+                            <h3 style="font-size: 20px; margin: 0 0; display: block !important;">
+                                No match history :(</h3></th>
                     </tr>
-
-                    <tr>
-                        <th>
-
-                        </th>
-                        <th>
-                            Participants
-                        </th>
-                        <th>
-                            Outcome
-                        </th>
-                        <th>
-                            Points
-                        </th>
-                    </tr>
-
-                    {% for lastMatch in lastMatches %}
-                        <tr class="driver">
-                            <td class="position">
-                                {% if app.user.id == lastMatch.winner.id %}
-                                    🏆
-                                {% else %}
-                                    ❌
-                                {% endif %}
-                            </td>
-                            {% if app.user.id == lastMatch.winner.id %}
-                            <td class="driver" style="border-left: 4px solid yellowgreen; white-space: nowrap">
-                        {% else %}
-                            <td class="driver" style="border-left: 4px solid rgb(194,0,0); white-space: nowrap">
-                                {% endif %}
-                                {{ lastMatch.user1.username }} VS <strong>{{ lastMatch.user2.username }}</strong>
-                            </td>
-                            <td>
-                                {% if app.user.id == lastMatch.winner.id %}
-                                    <span style="color: yellowgreen">WIN</span>
-                                {% else %}
-                                    <span>LOSE</span>
-                                {% endif %}
-                            </td>
-                            {% if app.user.id == lastMatch.user1.id %}
-                                <td class="gap"><span>{{ lastMatch.getUser1Points() }}</span></td>
-                            {% else %}
-                                <td class="gap"><span>{{ lastMatch.getUser2Points() }}</span></td>
-                            {% endif %}
-                        </tr>
-                    {% endfor %}
                 </table>
+                {% endif %}
             </div>
         </div>
 

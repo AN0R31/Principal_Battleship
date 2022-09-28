@@ -26,7 +26,6 @@
 
 
 
-
     <div id="coin-flip-container" class="coin-flip-container">
         <div class="coin" id="coin">
             <div class="heads">
@@ -75,6 +74,8 @@
 
     </div>
 
+{#    <div style="background-image: url('{{ asset('img/fire.gif') }}'); background-size: cover; height: 50px">a</div>#}
+
     <div style="display: flex;justify-content: center">
         <div>
             {% if isSpectator %}
@@ -108,16 +109,23 @@
         </div>
     </div>
 
+
     {% if not isSpectator %}
         <div id="boats" style="margin: 5vh 0; width: 100%; display: inline-flex; justify-content: space-around">
             {% for i in  1..nrShips %}
-                <div class="boat-to-select" style="margin-right: 20px">
+                <div class="boat-to-select" style="margin-right: 20px; color: transparent">
                     <div id="boat_{{ i }}" data-rotation="0" draggable="true" class="boats"
                          style="display: flex;"
                          data-size="{{ boatSizes[i-1] }}"
                          data-position="{{ "false" }}">
                         {% for j in 1..boatSizes[i-1] %}
-                            <div class="ship">{{ i }}</div>
+                            {% if j == 1 %}
+                                <div class="ship" style="background-image: url('{{ asset('img/shipBack.png') }}');">{{ i }}</div>
+                            {% elseif j == boatSizes[i-1] %}
+                                <div class="ship" style="background-image: url('{{ asset('img/shipFront.png') }}');">{{ i }}</div>
+                            {% else %}
+                                <div class="ship" style="background-image: url('{{ asset('img/shipBody.png') }}');">{{ i }}</div>
+                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>

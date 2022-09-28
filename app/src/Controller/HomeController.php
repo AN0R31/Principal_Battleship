@@ -22,9 +22,13 @@ class HomeController extends AbstractController
 
         $ongoingBattles = $entityManager->getRepository(Battle::class)->findBy(['winner_id' => null, 'public' => 1], array('id' => 'DESC'), 100);
 
-        $lastMatches = $entityManager->getRepository(Battle::class)->findBy(['user1_id' => $thisUser], array('id' => 'DESC'));
+        $lastMatches = $entityManager->getRepository(Battle::class)->findBy(['user1_id' => $thisUser->getId()]);
 
-        $lastMatches += $entityManager->getRepository(Battle::class)->findBy(['user2_id' => $thisUser], array('id' => 'DESC'));
+        $lastMatches2 = $entityManager->getRepository(Battle::class)->findBy(['user2_id' => $thisUser->getId()]);
+
+        foreach ($lastMatches2 as $match) {
+            $lastMatches[] = $match;
+        }
 
         $key = 0;
         foreach ($lastMatches as $lastMatch) {
@@ -36,6 +40,13 @@ class HomeController extends AbstractController
             }
             $key++;
         }
+
+        $id = array();
+        foreach ($lastMatches as $key => $lastMatch)
+        {
+            $id[$key] = $lastMatch->getId();
+        }
+        array_multisort($id, SORT_DESC, $lastMatches);
 
         array_splice($lastMatches, 5, sizeof($lastMatches));
 
