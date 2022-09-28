@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -40,6 +41,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(nullable: true)]
     private ?int $matches = null;
+
+    #[ORM\Column(type: Types::BIGINT)]
+    private ?string $registration_date = null;
 
     public function getId(): ?int
     {
@@ -169,6 +173,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function addMatches(int $matches): self
     {
         $this->matches = $this->getMatches() + $matches;
+
+        return $this;
+    }
+
+    public function getRegistrationDate(): ?string
+    {
+        return $this->registration_date;
+    }
+
+    public function setRegistrationDate(string $registration_date): self
+    {
+        $this->registration_date = $registration_date;
 
         return $this;
     }
