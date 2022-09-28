@@ -16,3 +16,4 @@ import sweetalert2 from "sweetalert2";
 
 import './javascript/customAlerts';
 import './javascript/home';
+

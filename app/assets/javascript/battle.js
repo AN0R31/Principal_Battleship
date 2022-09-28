@@ -2,6 +2,14 @@ import axios from "axios";
 import {customAlertError, customAlertSuccess} from "./customAlerts";
 import Pusher from "pusher-js";
 
+import shipBack from '/public/img/shipBack.png'
+import shipBody from '/public/img/shipBody.png'
+import shipFront from '/public/img/shipFront.png'
+import fire from '/public/img/fire.gif'
+import stars from '/public/img/stars.jpg'
+import scraps from '/public/img/scraps.png'
+import blackHole from '/public/img/blackHole.gif'
+
 turn = turn === 'host' ? 1 : 2; //WHICH USER'S TURN IT IS; 1 -> User1, 2 -> User2; HOST (User1) ALWAYS HAS THE FIRST MOVE!
 
 let status = null;
@@ -103,7 +111,6 @@ if (Number(isSpectator) === 0) {
         for (let li of document.getElementsByClassName("cell")) {
             li.innerText = '0';
             li.style.backgroundColor = 'gray'
-            li.style.color = 'black'
         }
         for (let child of document.getElementById('boats').children) {
             child.style.display = 'flex'
@@ -125,7 +132,11 @@ function hit(coordinates) {
 
     let targetCell = document.getElementById(cellId)
 
-    targetCell.style.backgroundColor = 'green';
+    targetCell.style.backgroundImage =  "url('"+blackHole+"')"
+    targetCell.style.backgroundSize = '100% 100%';
+    if (Boolean(Math.round(Math.random()))) {
+        targetCell.style.transform = "scaleX(-1)"
+    }
     targetCell.setAttribute('data-hit', "true");
 }
 
@@ -134,7 +145,11 @@ function hitBoat(coordinates) {
 
     let targetCell = document.getElementById(cellId)
 
-    targetCell.style.backgroundColor = 'red';
+    targetCell.style.backgroundImage =  "url('"+scraps+"'), " + "url('"+fire+"'), " + "url('"+stars+"')"
+    targetCell.style.backgroundSize = '100% 100%';
+    if (Boolean(Math.round(Math.random()))) {
+        targetCell.style.transform = "scaleX(-1)"
+    }
     targetCell.setAttribute('data-hit', "true");
 }
 
@@ -177,14 +192,22 @@ channel.bind('new-greeting', function (params) {
 
                 let targetCell = document.getElementById(cellId)
 
-                targetCell.style.backgroundColor = 'green';
+                targetCell.style.backgroundImage =  "url('"+scraps+"'), " + "url('"+fire+"'), " + "url('"+stars+"')"
+                targetCell.style.backgroundSize = '100% 100%';
+                if (Boolean(Math.round(Math.random()))) {
+                    targetCell.style.transform = "scaleX(-1)"
+                }
                 targetCell.setAttribute('data-hit', "true");
             } else {
                 let cellId = params.coordinates[0] + " " + params.coordinates[1]
 
                 let targetCell = document.getElementById(cellId)
 
-                targetCell.style.backgroundColor = 'red';
+                targetCell.style.backgroundImage =  "url('"+blackHole+"')"
+                targetCell.style.backgroundSize = '100% 100%';
+                if (Boolean(Math.round(Math.random()))) {
+                    targetCell.style.transform = "scaleX(-1)"
+                }
                 targetCell.setAttribute('data-hit', "true");
             }
         }
@@ -278,9 +301,15 @@ for (let boat of boats) {
     boat.addEventListener("dragstart", (event) => {
         if (document.getElementById('vertical').checked) {
             document.getElementById(boat.getAttribute('id')).style.display = 'block'
+            for (let child of document.getElementById(boat.getAttribute('id')).children) {
+                child.style.transform = "rotate(90deg)"
+            }
             boat.setAttribute('data-rotation', "1")
         } else {
             document.getElementById(boat.getAttribute('id')).style.display = 'flex'
+            for (let child of document.getElementById(boat.getAttribute('id')).children) {
+                child.style.removeProperty('transform')
+            }
             boat.setAttribute('data-rotation', "0")
         }
         event.dataTransfer.setDragImage(document.getElementById(boat.getAttribute('id')), 25, 25);
@@ -355,8 +384,14 @@ for (let cell of cells) {
                         let cellId = cell.getAttribute('id')[0] + (Number(cell.getAttribute('id')[1]) + i)
 
                         document.getElementById(cellId).innerHTML = dragged.getAttribute('id')[5]
-                        document.getElementById(cellId).style.backgroundImage = "url('/public/img/boat.jpg')"
-                        document.getElementById(cellId).style.color = 'white'
+                        if (i === 0) {
+                            document.getElementById(cellId).style.backgroundImage = "url('" + shipBack + "')"
+                        } else if (i === dragged.getAttribute('data-size')-1) {
+                            document.getElementById(cellId).style.backgroundImage = "url('"+shipFront+"')"
+                        } else {
+                            document.getElementById(cellId).style.backgroundImage = "url('"+shipBody+"')"
+                        }
+                        document.getElementById(cellId).classList.add('ship')
                     }
                     let startingCellOfBoat = cell.getAttribute('id')[0] + (Number(cell.getAttribute('id')[1]))
 
@@ -375,8 +410,15 @@ for (let cell of cells) {
                         let cellId = (Number(cell.getAttribute('id')[0]) + i) + cell.getAttribute('id')[1]
 
                         document.getElementById(cellId).innerHTML = dragged.getAttribute('id')[5]
-                        document.getElementById(cellId).style.backgroundImage = "url('/public/img/boat.jpg')"
-                        document.getElementById(cellId).style.color = 'white'
+                        if (i === 0) {
+                            document.getElementById(cellId).style.backgroundImage = "url('" + shipBack + "')"
+                        } else if (i === dragged.getAttribute('data-size')-1) {
+                            document.getElementById(cellId).style.backgroundImage = "url('"+shipFront+"')"
+                        } else {
+                            document.getElementById(cellId).style.backgroundImage = "url('"+shipBody+"')"
+                        }
+                        document.getElementById(cellId).style.transform = "rotate(90deg)"
+                        document.getElementById(cellId).classList.add('ship')
                     }
                     let startingCellOfBoat = (Number(cell.getAttribute('id')[0])) + cell.getAttribute('id')[1]
 
@@ -414,8 +456,23 @@ function loadBoats() {
                 let coordX = Number(loadedBoats[boatNr].coordinates.posX) + Number(j * deltaX);
                 let cell = document.getElementById(coordY + "" + coordX);
                 cell.innerHTML = boatNr
-                cell.style.backgroundImage = "url('/public/img/boat.jpg')"
-                cell.style.color = 'white'
+                if (j === 0) {
+                    cell.style.backgroundImage = "url('" + shipBack + "')"
+                    if (loadedBoats[boatNr].vertical) {
+                        cell.style.transform = "rotate(90deg)"
+                    }
+                } else if (j === loadedBoats[boatNr].size-1) {
+                    cell.style.backgroundImage = "url('"+shipFront+"')"
+                    if (loadedBoats[boatNr].vertical) {
+                        cell.style.transform = "rotate(90deg)"
+                    }
+                } else {
+                    cell.style.backgroundImage = "url('"+shipBody+"')"
+                    if (loadedBoats[boatNr].vertical) {
+                        cell.style.transform = "rotate(90deg)"
+                    }
+                }
+                cell.classList.add('ship')
             }
 
         }
@@ -448,10 +505,18 @@ function loadHits() {
         let cell = document.getElementById(hitsSent[index].posY + " " + hitsSent[index].posX)
 
         if (hitsSent[index].isHit) {
-            cell.style.backgroundColor = 'green'
+            cell.style.backgroundImage =  "url('"+scraps+"'), " + "url('"+fire+"'), " + "url('"+stars+"')"
+            cell.style.backgroundSize = '100% 100%';
+            if (Boolean(Math.round(Math.random()))) {
+                cell.style.transform = "scaleX(-1)"
+            }
             cell.setAttribute('data-hit', 'true')
         } else {
-            cell.style.backgroundColor = 'red'
+            cell.style.backgroundImage =  "url('"+blackHole+"')"
+            cell.style.backgroundSize = '100% 100%';
+            if (Boolean(Math.round(Math.random()))) {
+                cell.style.transform = "scaleX(-1)"
+            }
             cell.setAttribute('data-hit', 'true')
         }
     }
@@ -501,9 +566,17 @@ function cellEvent(event) {
         axios.post("/battle/hit", dataToSend).then(function (response) {
 
             if (response.data.isHit === true) {
-                cell.style.backgroundColor = 'green'
+                cell.style.backgroundImage =  "url('"+scraps+"'), " + "url('"+fire+"'), " + "url('"+stars+"')"
+                cell.style.backgroundSize = '100% 100%';
+                if (Boolean(Math.round(Math.random()))) {
+                    cell.style.transform = "scaleX(-1)"
+                }
             } else {
-                cell.style.backgroundColor = 'red'
+                cell.style.backgroundImage =  "url('"+blackHole+"')"
+                cell.style.backgroundSize = '100% 100%';
+                if (Boolean(Math.round(Math.random()))) {
+                    cell.style.transform = "scaleX(-1)"
+                }
             }
 
             if (response.data.allBoatsAreDestroyed === true) {
