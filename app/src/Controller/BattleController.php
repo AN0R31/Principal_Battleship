@@ -249,8 +249,7 @@ class BattleController extends AbstractController
         $gameSettings = $battleState->game;
 
         if ($user !== $gameSettings->turn) {
-            dd("asdasdasd");
-//           return new JsonResponse(['status' => false]);
+            dd("Nu e randul tau!");
         }
 
         if (intval($gameSettings->hitsLeft) === 1) {
@@ -316,7 +315,7 @@ class BattleController extends AbstractController
         $entityManager->persist($battle);
         $entityManager->flush();
 
-        $pusher->trigger($request->request->get('channel'), 'new-greeting', ['board' => $board, 'coordinates' => $coordinates, 'isHit' => $isHit]);
+        $pusher->trigger($request->request->get('channel'), 'new-greeting', ['board' => $board, 'coordinates' => $coordinates, 'isHit' => $isHit, 'turn' => $gameSettings->turn]);
         return new JsonResponse(['status' => true, 'isHit' => $isHit, 'allBoatsAreDestroyed' => $allBoatsAreDestroyed]);
     }
 
