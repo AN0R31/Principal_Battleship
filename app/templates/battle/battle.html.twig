@@ -51,7 +51,9 @@
 
 
     <div id="button-home" class="button-home">Home</div>
-    <div id="button-surrender" class="button-home surrender">Surrender</div>
+    {% if not isSpectator %}
+        <div id="button-surrender" class="button-home surrender">Surrender</div>
+    {% endif %}
 
     <h1>BATTLE</h1>
 
