@@ -326,6 +326,9 @@ class BattleController extends AbstractController
             "id" => $request->request->get('battle_id'),
         ]);
 
+        if ($battle->getWinner())
+            return new JsonResponse(['status' => false]);
+
         $winner = $this->getUser();
         $loser = $winner === $battle->getUser1() ? $battle->getUser2() : $battle->getUser1();
 
@@ -387,5 +390,15 @@ class BattleController extends AbstractController
         $pusher->trigger($request->request->get('channel'), 'emoji', ['emoji' => $request->request->get('emoji')]);
 
         return new JsonResponse();
+    }
+
+    #[Route('/battle/surrender', name: 'surrender', methods: ['post'])]
+    public function leave(Request $request, Pusher $pusher, EntityManagerInterface $entityManager)
+    {
+        $battle = $entityManager->getRepository(Battle::class)->findOneBy(["id" => $request->request->get('channel')]);
+        $isHost = $this->getUser() === $battle->getUser1();
+
+        $pusher->trigger($request->request->get('channel'), 'surrender', ['isHost' => $isHost]);
+        return new JsonResponse(['state' => true]);
     }
 }

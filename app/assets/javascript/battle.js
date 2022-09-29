@@ -65,7 +65,6 @@ function setStatus() {
             status = 'This match has ended!'
         }
 
-        console.log(status)
         document.getElementById('status-box').innerHTML = status
     })
 }
@@ -219,8 +218,8 @@ channel.bind('new-greeting', function (params) {
 
 channel.bind('join', function (params) {
     document.getElementById('vs').innerHTML = params.user1Username + " VS " + params.user2Username;
-
-    setStatus()
+    user2Username = true;
+    setStatus();
 });
 
 channel.bind('start', function (params) {
@@ -679,3 +678,21 @@ for (const emojiElement of emojiElements) {
     });
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+let leaveButtonElement = document.getElementById('button-surrender');
+
+leaveButtonElement.addEventListener('click', function () {
+    let dataToSend = new FormData;
+    dataToSend.set('channel', channelName);
+    if (user2Username)
+        axios.post('/battle/surrender', dataToSend)
+})
+
+pusher.bind('surrender', function (params) {
+    if ((params.isHost === true && Boolean(Number(isHost)) === false) || (params.isHost === false && Boolean(Number(isHost)) === true)) {
+        const dataToSendToEnd = new FormData;
+        dataToSendToEnd.set('battle_id', battle_id)
+        dataToSendToEnd.set('channel', channelName)
+        axios.post("/battle/end", dataToSendToEnd)
+    }
+});
