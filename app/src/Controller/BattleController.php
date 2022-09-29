@@ -103,6 +103,16 @@ class BattleController extends AbstractController
     {
         $requestParameters = $request->request;
 
+        $ongoingBattle1 = $entityManager->getRepository(Battle::class)->findOneBy(['user1_id' => $this->getUser()->getId(), 'winner_id' => null]);
+        $ongoingBattle2 = $entityManager->getRepository(Battle::class)->findOneBy(['user2_id' => $this->getUser()->getId(), 'winner_id' => null]);
+
+        if ($ongoingBattle1 !== null) {
+            return new JsonResponse(['status' => false]);
+        }
+        if ($ongoingBattle2 !== null) {
+            return new JsonResponse(['status' => false]);
+        }
+
         $nrShips = $requestParameters->get('ships');
         $nrShots = $requestParameters->get('shots');
         $public = $requestParameters->get('public') === 'true' ? 1 : 0;
@@ -139,6 +149,16 @@ class BattleController extends AbstractController
     #[Route('/battle/join', name: 'join_battle', methods: ['post'])]
     public function joinBattle(Pusher $pusher, Request $request, EntityManagerInterface $entityManager, JoinBattleService $service): Response
     {
+        $ongoingBattle1 = $entityManager->getRepository(Battle::class)->findOneBy(['user1_id' => $this->getUser()->getId(), 'winner_id' => null]);
+        $ongoingBattle2 = $entityManager->getRepository(Battle::class)->findOneBy(['user2_id' => $this->getUser()->getId(), 'winner_id' => null]);
+
+        if ($ongoingBattle1 !== null) {
+            return new JsonResponse(['status' => false, 'message' => 'You are already in a battle!']);
+        }
+        if ($ongoingBattle2 !== null) {
+            return new JsonResponse(['status' => false, 'message' => 'You are already in a battle!']);
+        }
+
         $givenPassword = $request->request->get('password') ?? $request->attributes->get('password');
 
         $battle = $entityManager->getRepository(Battle::class)->findOneBy(['password' => $givenPassword]);
@@ -249,7 +269,7 @@ class BattleController extends AbstractController
         $gameSettings = $battleState->game;
 
         if ($user !== $gameSettings->turn) {
-            dd("Nu e randul tau!");
+            dd("Invalid TURN");
         }
 
         if (intval($gameSettings->hitsLeft) === 1) {
@@ -267,6 +287,7 @@ class BattleController extends AbstractController
 
         $isHit = false;
         $allBoatsAreDestroyed = true;
+        $currentBoat = null;
 
         foreach ($battleState->{$board}->boats as $boat) {
             if ($coordinates[1] === $boat->coordinates->posX && $boat->vertical === true) {
@@ -275,6 +296,7 @@ class BattleController extends AbstractController
                         $isHit = true;
 
                         $boat->health = intval($boat->health) - 1;
+                        $currentBoat = $boat;
                         //break;
                     }
                 }
@@ -286,6 +308,7 @@ class BattleController extends AbstractController
                         $isHit = true;
 
                         $boat->health = intval($boat->health) - 1;
+                        $currentBoat = $boat;
                         //break;
                     }
                 }
@@ -294,6 +317,20 @@ class BattleController extends AbstractController
             if (intval($boat->health) > 0) {
                 $allBoatsAreDestroyed = false;
             }
+        }
+
+        if ($isHit) {
+            $isBoatDestroyed = intval($currentBoat->health) === 0;
+            $boatX = $currentBoat->coordinates->posX;
+            $boatY = $currentBoat->coordinates->posY;
+            $boatSize = $currentBoat->size;
+            $vertical = $currentBoat->vertical;
+        } else {
+            $isBoatDestroyed = false;
+            $boatX = null;
+            $boatY = null;
+            $boatSize = null;
+            $vertical = null;
         }
 
         /////////////////////////////ADD POINTS/////////////////////////////////
@@ -315,7 +352,17 @@ class BattleController extends AbstractController
         $entityManager->persist($battle);
         $entityManager->flush();
 
-        $pusher->trigger($request->request->get('channel'), 'new-greeting', ['board' => $board, 'coordinates' => $coordinates, 'isHit' => $isHit, 'turn' => $gameSettings->turn]);
+        $pusher->trigger($request->request->get('channel'), 'new-greeting', [
+            'board' => $board,
+            'coordinates' => $coordinates,
+            'isHit' => $isHit,
+            'turn' => $gameSettings->turn,
+            'isBoatDestroyed' => $isBoatDestroyed,
+            'boatX' => $boatX,
+            'boatY' => $boatY,
+            'boatSize' => $boatSize,
+            'vertical' => $vertical,
+        ]);
         return new JsonResponse(['status' => true, 'isHit' => $isHit, 'allBoatsAreDestroyed' => $allBoatsAreDestroyed]);
     }
 

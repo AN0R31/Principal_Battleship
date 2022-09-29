@@ -71,9 +71,11 @@ submitModalButton.addEventListener("click", ev => {
             dataToSend,
         ).then(function (response) {
             if (response.data.status === true) {
+                localStorage.removeItem('destroyedBoats')
                 window.location.href = '/battle?battle_id='+response.data.battle_id+'&password='+response.data.password;
             } else {
-                customAlertError('Something went wrong. Please try again!')
+                customAlertError('You are already in a battle!')
+                createMatchModal.style.display = 'none';
             }
         });
 

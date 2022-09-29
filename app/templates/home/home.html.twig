@@ -45,7 +45,19 @@
     <div class="main-container">
         <div class="leaderboard-container">
             <div class="leaderboard">
-                <h3 style="margin: 0 0; padding: 0 0;">Leaderboard</h3>
+                <div style="display: inline-flex; justify-content: space-between">
+                    <a href="/profile?id={{ app.user.id }}"
+                       style="color: white; font-size: 25px; display: inline-flex; width: fit-content;">
+                        <div style="background-image: url('{{ asset('img/p'~app.user.getProfilePicture()~'.png') }}');
+                                background-size: 100% 100%; width: 40px; height: 40px; border: 1px solid black; border-radius: 100px;">
+                        </div>
+                        <div style="margin-left: 10px; align-self: center">
+                            {{ app.user.username }}
+                        </div>
+                    </a>
+                    <h3 style="margin: 0 0; padding: 0 0;">Leaderboard</h3>
+                    <div style="width: 7.5%"></div>
+                </div>
                 <table style="overflow-y: auto; height: 40%; ">
                     <tr style="position: marker">
                         <th>
@@ -74,7 +86,8 @@
                                 {% else %}
                                     🥹
                                 {% endif %}
-                                <strong><a href="/profile?id={{ leaderboard.id }}" style="color: white">{{ leaderboard.username }}</a></strong>
+                                <strong><a href="/profile?id={{ leaderboard.id }}"
+                                           style="color: white">{{ leaderboard.username }}</a></strong>
                             </td>
                             <td><span>{{ leaderboard.matches }}</span></td>
                             <td class="gap"><span>{{ leaderboard.points }}</span></td>
@@ -88,6 +101,36 @@
                                 <h3 style="font-size: 20px; white-space: nowrap; margin: 0 0; justify-content: space-evenly; width: 600%">
                                     My Matches</h3></th>
                         </tr>
+
+                        {% if userOngoingBattle != null %}
+                            <tr class="driver">
+                                <td class="position" style="color: #cd3299">...</td>
+                                <td class="driver"
+                                    style="border-left: 4px solid rgb(255,0,213); white-space: nowrap; color: #cd3299">
+                                    {% if userOngoingBattle.user2 %}
+                                        {% if app.user == userOngoingBattle.user1 %}
+                                            <strong><a href="/profile?id={{ userOngoingBattle.user1.id }}"
+                                                       style="color: #cd3299">{{ userOngoingBattle.user1.username }}</a></strong> VS
+                                            <a href="/profile?id={{ userOngoingBattle.user2.id }}"
+                                               style="color: #cd3299">{{ userOngoingBattle.user2.username }}</a>
+                                        {% else %}
+                                            <a href="/profile?id={{ userOngoingBattle.user1.id }}"
+                                               style="color: #cd3299">{{ userOngoingBattle.user1.username }}</a> VS
+                                            <strong><a href="/profile?id={{ userOngoingBattle.user2.id }}"
+                                                       style="color: #cd3299">{{ userOngoingBattle.user2.username }}</a></strong>
+                                        {% endif %}
+                                    {% else %}
+                                        <strong>Waiting for opponent...</strong>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span style="color: #cd3299">ONGOING</span>
+                                </td>
+                                <td class="gap"><a
+                                            href="/battle?battle_id={{ userOngoingBattle.id }}&password={{ userOngoingBattle.password }}">
+                                        <span style="color: #cd3299">JOIN</span></a></td>
+                            </tr>
+                        {% endif %}
 
                         <tr>
                             <th>
@@ -104,6 +147,10 @@
                             </th>
                         </tr>
 
+                        {#                        {{ dump(userOngoingBattle) }} #}
+
+
+
                         {% for lastMatch in lastMatches %}
                             <tr class="driver">
                                 <td class="position">
@@ -119,10 +166,15 @@
                                 <td class="driver" style="border-left: 4px solid rgb(194,0,0); white-space: nowrap">
                                     {% endif %}
                                     {% if app.user == lastMatch.user1 %}
-                                        <strong><a href="/profile?id={{ lastMatch.user1.id }}" style="color: white">{{ lastMatch.user1.username }}</a></strong> VS <a href="/profile?id={{ lastMatch.user2.id }}" style="color: white">{{ lastMatch.user2.username }}</a>
+                                        <strong><a href="/profile?id={{ lastMatch.user1.id }}"
+                                                   style="color: white">{{ lastMatch.user1.username }}</a></strong> VS
+                                        <a href="/profile?id={{ lastMatch.user2.id }}"
+                                           style="color: white">{{ lastMatch.user2.username }}</a>
                                     {% else %}
-                                        <a href="/profile?id={{ lastMatch.user1.id }}" style="color: white">{{ lastMatch.user1.username }}</a> VS
-                                        <strong><a href="/profile?id={{ lastMatch.user2.id }}" style="color: white">{{ lastMatch.user2.username }}</a></strong>
+                                        <a href="/profile?id={{ lastMatch.user1.id }}"
+                                           style="color: white">{{ lastMatch.user1.username }}</a> VS
+                                        <strong><a href="/profile?id={{ lastMatch.user2.id }}"
+                                                   style="color: white">{{ lastMatch.user2.username }}</a></strong>
                                     {% endif %}
                                 </td>
                                 <td>
@@ -140,14 +192,15 @@
                             </tr>
                         {% endfor %}
                     </table>
-                    {% else %}
-                <table style="overflow-y: auto; height: auto">
-                    <tr>
-                        <th></th><th>
-                            <h3 style="font-size: 20px; margin: 0 0; display: block !important;">
-                                No match history :(</h3></th>
-                    </tr>
-                </table>
+                {% else %}
+                    <table style="overflow-y: auto; height: auto">
+                        <tr>
+                            <th></th>
+                            <th>
+                                <h3 style="font-size: 20px; margin: 0 0; display: block !important;">
+                                    No match history :(</h3></th>
+                        </tr>
+                    </table>
                 {% endif %}
             </div>
         </div>

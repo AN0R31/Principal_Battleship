@@ -87,13 +87,15 @@
                 <h3>Your Board</h3>
             {% endif %}
 
-            {% for i in 0..9 %}
-                <ul style="display: flex;list-style: none;margin: 0;padding: 0; justify-content: center">
-                    {% for j in 0..9 %}
-                        <li id="{{ "#{i}#{j}" }}" class="cell">0</li>
-                    {% endfor %}
-                </ul>
-            {% endfor %}
+            <div style="border: 10px solid rgba(65,65,65,0.5); border-radius: 10px">
+                {% for i in 0..9 %}
+                    <ul style="display: flex;list-style: none;margin: 0;padding: 0; justify-content: center">
+                        {% for j in 0..9 %}
+                            <li id="{{ "#{i}#{j}" }}" class="cell">0</li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </div>
         </div>
         <div style="display: flex; flex-direction: column;">
 
@@ -122,49 +124,55 @@
             {% else %}
                 <h3>Enemy Board</h3>
             {% endif %}
-            {% for i in 0..9 %}
-                <ul style="display: flex;list-style: none;margin: 0;padding: 0; justify-content: center">
-                    {% for j in 0..9 %}
-                        <li id="{{ "#{i} #{j}" }}" class="cells">0</li>
-                    {% endfor %}
-                </ul>
-            {% endfor %}
+            <div style="border: 10px solid rgba(65,65,65,0.5); border-radius: 10px">
+                {% for i in 0..9 %}
+                    <ul style="display: flex;list-style: none;margin: 0;padding: 0; justify-content: center">
+                        {% for j in 0..9 %}
+                            <li id="{{ "#{i} #{j}" }}" class="cells">0</li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </div>
         </div>
     </div>
 
 
     {% if not isSpectator %}
-        <div id="boats" style="margin: 5vh 0; width: 100%; display: inline-flex; justify-content: space-around">
-            {% for i in  1..nrShips %}
-                <div class="boat-to-select" style="margin-right: 20px; color: transparent">
-                    <div id="boat_{{ i }}" data-rotation="0" draggable="true" class="boats"
-                         style="display: flex;"
-                         data-size="{{ boatSizes[i-1] }}"
-                         data-position="{{ "false" }}">
-                        {% for j in 1..boatSizes[i-1] %}
-                            {% if j == 1 %}
-                                <div class="ship"
-                                     style="background-image: url('{{ asset('img/shipBack.png') }}');">{{ i }}</div>
-                            {% elseif j == boatSizes[i-1] %}
-                                <div class="ship"
-                                     style="background-image: url('{{ asset('img/shipFront.png') }}');">{{ i }}</div>
-                            {% else %}
-                                <div class="ship"
-                                     style="background-image: url('{{ asset('img/shipBody.png') }}');">{{ i }}</div>
-                            {% endif %}
-                        {% endfor %}
+        <div style="display: flex; justify-content: center;">
+            <div id="boats" style=" margin-top: 25px; width: 95%; display: flex; justify-content: space-evenly; flex-wrap: wrap; align-items: center;
+        border: 10px solid rgba(65,65,65,0.25); border-radius: 10px; background-color: rgba(65,65,65,0.5); padding: 20px 0;">
+                {% for i in  1..nrShips %}
+                    <div class="boat-to-select"
+                         style="color: transparent; background-color: transparent !important; border: 10px solid rgba(65,65,65,0.25); border-radius: 10px">
+                        <div id="boat_{{ i }}" data-rotation="0" draggable="true" class="boats"
+                             style="display: flex;"
+                             data-size="{{ boatSizes[i-1] }}"
+                             data-position="{{ "false" }}">
+                            {% for j in 1..boatSizes[i-1] %}
+                                {% if j == 1 %}
+                                    <div class="ship"
+                                         style="background-image: url('{{ asset('img/shipBack.png') }}');">{{ i }}</div>
+                                {% elseif j == boatSizes[i-1] %}
+                                    <div class="ship"
+                                         style="background-image: url('{{ asset('img/shipFront.png') }}');">{{ i }}</div>
+                                {% else %}
+                                    <div class="ship"
+                                         style="background-image: url('{{ asset('img/shipBody.png') }}');">{{ i }}</div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
 
-            <div id="grid-options" class="grid-options">
-                <div id="vertical-checkbox" class="vertical-checkbox">
-                    <p>Vertical:</p>
-                    <input type="checkbox" id="vertical" name="vertical" value="{{ 0 }}">
-                </div>
-                <div id="send-or-reset" class="send-or-reset">
-                    <div id="send" class="boats-button">Send</div>
-                    <div id="reset-board" class="boats-button">Reset</div>
+                <div id="grid-options" class="grid-options">
+                    <div id="send-or-reset" class="send-or-reset">
+                        <div id="send" class="boats-button raise">Save</div>
+                        <div id="reset-board" class="boats-button raise">Reset</div>
+                    </div>
+                    <div id="vertical-checkbox" class="vertical-checkbox">
+                        <p>Vertical:</p>
+                        <input type="checkbox" id="vertical" name="vertical" value="{{ 0 }}">
+                    </div>
                 </div>
             </div>
         </div>
