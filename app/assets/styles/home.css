@@ -8,8 +8,11 @@ body {
     height: 100vh;
 
     margin: 0 0;
-
     overflow-y: hidden;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
 }
 
 @keyframes gradient {

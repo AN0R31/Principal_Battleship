@@ -380,4 +380,12 @@ class BattleController extends AbstractController
             'hasMatchEnded' => $hasMatchEnded,
         ]);
     }
+
+    #[Route('/emoji', name: 'emoji', methods: ['post'])]
+    public function emoji(Request $request, Pusher $pusher)
+    {
+        $pusher->trigger($request->request->get('channel'), 'emoji', ['emoji' => $request->request->get('emoji')]);
+
+        return new JsonResponse();
+    }
 }
