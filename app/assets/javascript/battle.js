@@ -612,7 +612,7 @@ channel.bind('emoji', function (param) {
     emoji.push(param.emoji);
     index = 0;
 
-    addCircle(550, [0, 12], emoji[0]);
+    addCircle(0, [0, 12], emoji[0]);
     animate();
 });
 

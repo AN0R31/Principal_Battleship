@@ -2,6 +2,10 @@
 
 {% block title %}BATTLESHIP!{% endblock %}
 
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+
 {% block body %}
 
     <div style="display: flex; justify-content: center">
@@ -70,7 +74,7 @@
                                 {% else %}
                                     🥹
                                 {% endif %}
-                                <strong>{{ leaderboard.username }}</strong>
+                                <strong><a href="/profile?id={{ leaderboard.id }}" style="color: white">{{ leaderboard.username }}</a></strong>
                             </td>
                             <td><span>{{ leaderboard.matches }}</span></td>
                             <td class="gap"><span>{{ leaderboard.points }}</span></td>
@@ -115,10 +119,10 @@
                                 <td class="driver" style="border-left: 4px solid rgb(194,0,0); white-space: nowrap">
                                     {% endif %}
                                     {% if app.user == lastMatch.user1 %}
-                                        <strong>{{ lastMatch.user1.username }}</strong> VS {{ lastMatch.user2.username }}
+                                        <strong><a href="/profile?id={{ lastMatch.user1.id }}" style="color: white">{{ lastMatch.user1.username }}</a></strong> VS <a href="/profile?id={{ lastMatch.user2.id }}" style="color: white">{{ lastMatch.user2.username }}</a>
                                     {% else %}
-                                        {{ lastMatch.user1.username }} VS
-                                        <strong>{{ lastMatch.user2.username }}</strong>
+                                        <a href="/profile?id={{ lastMatch.user1.id }}" style="color: white">{{ lastMatch.user1.username }}</a> VS
+                                        <strong><a href="/profile?id={{ lastMatch.user2.id }}" style="color: white">{{ lastMatch.user2.username }}</a></strong>
                                     {% endif %}
                                 </td>
                                 <td>

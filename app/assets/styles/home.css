@@ -28,7 +28,7 @@ body {
 }
 
 a {
-    text-decoration: none;
+    text-decoration: none;;
 }
 
 h1 {
@@ -686,7 +686,6 @@ table td span {
 }
 
 .profile-picture {
-    background-image: url(/public/img/p10.png);
     background-size: 100% 100%;
 
     border: 2px solid black;
@@ -733,9 +732,44 @@ table td span {
 }
 
 .profile-badge {
-    width: 40px;
-    height: 50px;
-    border: 1px solid white;
+    width: 75px;
+    height: 75px;
+    border-radius: 15px;
+    background-size: 100% 100%;
+    filter: drop-shadow(0 0 0.75rem rgb(0, 140, 255));
+    animation: pulse 2s linear infinite;
+}
+
+@-webkit-keyframes pulse {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+    50% {
+        -webkit-transform: scale(0.95);
+        transform: scale(0.95);
+    }
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 1100px) {
+    .profile-badges > *:nth-child(6) {
+        display: none;
+    }
+}
+
+.profile-badge-small {
+    width: 75px;
+    height: 75px;
+    margin-top: -10px;
+    border-radius: 15px;
+    background-size: 100% 100%;
+    align-self: center;
+    filter: drop-shadow(0 0 0.75rem #cd3299);
+    animation: pulse 2s linear infinite;
 }
 
 .profile-stats {
@@ -777,4 +811,77 @@ table td span {
     justify-content: space-evenly;
 
     margin-top: 75px;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 300px;
+    background-color: transparent;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
+    margin-left: -150px;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+.change-profile-picture-button {
+    font-size: 15px;
+    color: white;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, 2px -2px 0 #3a3a3a, 1px 1px 0 #000;
+    width: fit-content;
+    padding: 5px 5px;
+}
+
+.change-profile-picture-button:hover {
+    cursor: grab;
+}
+
+.profile-picture-modal-container {
+    width: 100%;
+    height: fit-content;
+    display: none;
+    align-items: center;
+    justify-content: space-evenly;
+    position: absolute;
+    z-index: 500;
+}
+
+.profile-picture-modal {
+    width: 75%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.75);
+    border-radius: 15px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.profile-picture-modal-element {
+    width: 150px;
+    height: 150px;
+    border: 1px solid black;
+    margin: 25px 25px;
+    background-size: 100% 100%;
+}
+
+.profile-picture-modal-element:hover {
+    animation: pulse 2s linear infinite;
+    cursor: grab;
 }

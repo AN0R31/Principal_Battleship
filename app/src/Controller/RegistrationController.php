@@ -39,6 +39,8 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         $user->setRegistrationDate(time());
+        $user->setProfilePicture(1);
+        $user->setBadges(json_encode([1]));
 
         if ($form->isSubmitted() && $form->isValid()) {
             // encode the plain password

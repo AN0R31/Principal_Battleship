@@ -45,6 +45,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::BIGINT)]
     private ?string $registration_date = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $badges = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $profile_picture = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -185,6 +191,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRegistrationDate(string $registration_date): self
     {
         $this->registration_date = $registration_date;
+
+        return $this;
+    }
+
+    public function getBadges(): ?string
+    {
+        return $this->badges;
+    }
+
+    public function setBadges(string $badges): self
+    {
+        $this->badges = $badges;
+
+        return $this;
+    }
+
+    public function getProfilePicture(): ?string
+    {
+        return $this->profile_picture;
+    }
+
+    public function setProfilePicture(string $profile_picture): self
+    {
+        $this->profile_picture = $profile_picture;
 
         return $this;
     }
