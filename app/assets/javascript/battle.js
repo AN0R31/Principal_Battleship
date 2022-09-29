@@ -49,7 +49,7 @@ function setStatus() {
             status = 'Waiting for all players to place their boats...'
         } else if (Number(haveBoatsBeenSet) === 0) {
             status = 'Waiting for you to place your boats...'
-        } else if (Number(haveOpponentsBoatsBeenSet) === 0){
+        } else if (Number(haveOpponentsBoatsBeenSet) === 0) {
             status = 'Waiting for opponent to place his boats...'
         }
 
@@ -132,7 +132,7 @@ function hit(coordinates) {
 
     let targetCell = document.getElementById(cellId)
 
-    targetCell.style.backgroundImage =  "url('"+blackHole+"')"
+    targetCell.style.backgroundImage = "url('" + blackHole + "')"
     targetCell.style.backgroundSize = '100% 100%';
     if (Boolean(Math.round(Math.random()))) {
         targetCell.style.transform = "scaleX(-1)"
@@ -145,7 +145,7 @@ function hitBoat(coordinates) {
 
     let targetCell = document.getElementById(cellId)
 
-    targetCell.style.backgroundImage =  "url('"+scraps+"'), " + "url('"+fire+"'), " + "url('"+stars+"')"
+    targetCell.style.backgroundImage = "url('" + scraps + "'), " + "url('" + fire + "'), " + "url('" + stars + "')"
     targetCell.style.backgroundSize = '100% 100%';
     if (Boolean(Math.round(Math.random()))) {
         targetCell.style.transform = "scaleX(-1)"
@@ -192,7 +192,7 @@ channel.bind('new-greeting', function (params) {
 
                 let targetCell = document.getElementById(cellId)
 
-                targetCell.style.backgroundImage =  "url('"+scraps+"'), " + "url('"+fire+"'), " + "url('"+stars+"')"
+                targetCell.style.backgroundImage = "url('" + scraps + "'), " + "url('" + fire + "'), " + "url('" + stars + "')"
                 targetCell.style.backgroundSize = '100% 100%';
                 if (Boolean(Math.round(Math.random()))) {
                     targetCell.style.transform = "scaleX(-1)"
@@ -203,7 +203,7 @@ channel.bind('new-greeting', function (params) {
 
                 let targetCell = document.getElementById(cellId)
 
-                targetCell.style.backgroundImage =  "url('"+blackHole+"')"
+                targetCell.style.backgroundImage = "url('" + blackHole + "')"
                 targetCell.style.backgroundSize = '100% 100%';
                 if (Boolean(Math.round(Math.random()))) {
                     targetCell.style.transform = "scaleX(-1)"
@@ -386,10 +386,10 @@ for (let cell of cells) {
                         document.getElementById(cellId).innerHTML = dragged.getAttribute('id')[5]
                         if (i === 0) {
                             document.getElementById(cellId).style.backgroundImage = "url('" + shipBack + "')"
-                        } else if (i === dragged.getAttribute('data-size')-1) {
-                            document.getElementById(cellId).style.backgroundImage = "url('"+shipFront+"')"
+                        } else if (i === dragged.getAttribute('data-size') - 1) {
+                            document.getElementById(cellId).style.backgroundImage = "url('" + shipFront + "')"
                         } else {
-                            document.getElementById(cellId).style.backgroundImage = "url('"+shipBody+"')"
+                            document.getElementById(cellId).style.backgroundImage = "url('" + shipBody + "')"
                         }
                         document.getElementById(cellId).classList.add('ship')
                     }
@@ -412,10 +412,10 @@ for (let cell of cells) {
                         document.getElementById(cellId).innerHTML = dragged.getAttribute('id')[5]
                         if (i === 0) {
                             document.getElementById(cellId).style.backgroundImage = "url('" + shipBack + "')"
-                        } else if (i === dragged.getAttribute('data-size')-1) {
-                            document.getElementById(cellId).style.backgroundImage = "url('"+shipFront+"')"
+                        } else if (i === dragged.getAttribute('data-size') - 1) {
+                            document.getElementById(cellId).style.backgroundImage = "url('" + shipFront + "')"
                         } else {
-                            document.getElementById(cellId).style.backgroundImage = "url('"+shipBody+"')"
+                            document.getElementById(cellId).style.backgroundImage = "url('" + shipBody + "')"
                         }
                         document.getElementById(cellId).style.transform = "rotate(90deg)"
                         document.getElementById(cellId).classList.add('ship')
@@ -461,13 +461,13 @@ function loadBoats() {
                     if (loadedBoats[boatNr].vertical) {
                         cell.style.transform = "rotate(90deg)"
                     }
-                } else if (j === loadedBoats[boatNr].size-1) {
-                    cell.style.backgroundImage = "url('"+shipFront+"')"
+                } else if (j === loadedBoats[boatNr].size - 1) {
+                    cell.style.backgroundImage = "url('" + shipFront + "')"
                     if (loadedBoats[boatNr].vertical) {
                         cell.style.transform = "rotate(90deg)"
                     }
                 } else {
-                    cell.style.backgroundImage = "url('"+shipBody+"')"
+                    cell.style.backgroundImage = "url('" + shipBody + "')"
                     if (loadedBoats[boatNr].vertical) {
                         cell.style.transform = "rotate(90deg)"
                     }
@@ -505,14 +505,14 @@ function loadHits() {
         let cell = document.getElementById(hitsSent[index].posY + " " + hitsSent[index].posX)
 
         if (hitsSent[index].isHit) {
-            cell.style.backgroundImage =  "url('"+scraps+"'), " + "url('"+fire+"'), " + "url('"+stars+"')"
+            cell.style.backgroundImage = "url('" + scraps + "'), " + "url('" + fire + "'), " + "url('" + stars + "')"
             cell.style.backgroundSize = '100% 100%';
             if (Boolean(Math.round(Math.random()))) {
                 cell.style.transform = "scaleX(-1)"
             }
             cell.setAttribute('data-hit', 'true')
         } else {
-            cell.style.backgroundImage =  "url('"+blackHole+"')"
+            cell.style.backgroundImage = "url('" + blackHole + "')"
             cell.style.backgroundSize = '100% 100%';
             if (Boolean(Math.round(Math.random()))) {
                 cell.style.transform = "scaleX(-1)"
@@ -563,13 +563,13 @@ function cellEvent(event) {
         axios.post("/battle/hit", dataToSend).then(function (response) {
 
             if (response.data.isHit === true) {
-                cell.style.backgroundImage =  "url('"+scraps+"'), " + "url('"+fire+"'), " + "url('"+stars+"')"
+                cell.style.backgroundImage = "url('" + scraps + "'), " + "url('" + fire + "'), " + "url('" + stars + "')"
                 cell.style.backgroundSize = '100% 100%';
                 if (Boolean(Math.round(Math.random()))) {
                     cell.style.transform = "scaleX(-1)"
                 }
             } else {
-                cell.style.backgroundImage =  "url('"+blackHole+"')"
+                cell.style.backgroundImage = "url('" + blackHole + "')"
                 cell.style.backgroundSize = '100% 100%';
                 if (Boolean(Math.round(Math.random()))) {
                     cell.style.transform = "scaleX(-1)"
@@ -599,4 +599,77 @@ function addEventListenersToGrid() {
 
 if (Number(hasMatchEnded) === 1 || Number(haveBoatsBeenSet) === 0 || Number(haveOpponentsBoatsBeenSet) === 0) {
     removeEventListenersFromGrid()
+}
+
+let emojiElements = document.getElementsByClassName('emoji');
+var container = document.getElementById('test');
+let index = 0;
+var emoji = []
+var circles = [];
+
+channel.bind('emoji', function (param) {
+    emoji = [];
+    emoji.push(param.emoji);
+    index = 0;
+
+    addCircle(550, [0, 12], emoji[0]);
+    animate();
+});
+
+function animate() {
+    for (var i in circles) {
+        circles[i].update();
+    }
+    index++;
+    if (index < 700) {
+        requestAnimationFrame(animate);
+    } else {
+        cancelAnimationFrame(animate);
+        container.replaceChildren();
+    }
+}
+
+function addCircle(delay, range, color) {
+    setTimeout(function () {
+        var c = new Circle(range[0] + Math.random() * range[1], 80 + Math.random() * 4, color, {
+            x: -0.15 + Math.random() * 0.3,
+            y: 1 + Math.random()
+        }, range);
+        circles.push(c);
+    }, delay);
+}
+
+function Circle(x, y, c, v, range) {
+    var _this = this;
+    this.x = 0;
+    this.y = y;
+    this.color = c;
+    this.v = v;
+    this.range = range;
+    this.element = document.createElement('span');
+    this.element.style.position = 'absolute';
+    this.element.style.fontSize = '35px';
+    this.element.innerHTML = c;
+    container.appendChild(this.element);
+
+    this.update = function () {
+        if (_this.y > window.screen.availHeight) {
+            this.element.remove();
+        }
+        _this.y += _this.v.y;
+        _this.x += _this.v.x;
+        this.element.style.opacity = 1;
+        this.element.style.transform = 'translate3d(' + _this.x + 'px, ' + _this.y + 'px, 0px)';
+        this.element.style.webkitTransform = 'translate3d(' + _this.x + 'px, ' + _this.y + 'px, 0px)';
+        this.element.style.mozTransform = 'translate3d(' + _this.x + 'px, ' + _this.y + 'px, 0px)';
+    };
+}
+
+for (const emojiElement of emojiElements) {
+    emojiElement.addEventListener('click', function () {
+        let dataToSend = new FormData;
+        dataToSend.set('channel', channelName);
+        dataToSend.set('emoji', this.getAttribute('data-emoji'));
+        axios.post('/emoji', dataToSend);
+    });
 }

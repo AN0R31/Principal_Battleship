@@ -74,33 +74,50 @@
 
     </div>
 
-{#    <div style="background-image: url('{{ asset('img/fire.gif') }}'); background-size: cover; height: 50px">a</div>#}
+    {#    <div style="background-image: url('{{ asset('img/fire.gif') }}'); background-size: cover; height: 50px">a</div> #}
 
     <div style="display: flex;justify-content: center">
         <div>
             {% if isSpectator %}
-                <h3 style="margin-left: 50px">{{ user2Username }}</h3>
+                <h3>{{ user2Username }}</h3>
             {% else %}
-                <h3 style="margin-left: 50px">Your Board</h3>
+                <h3>Your Board</h3>
             {% endif %}
 
             {% for i in 0..9 %}
-                <ul style="display: flex;list-style: none;margin: 0; justify-content: center">
+                <ul style="display: flex;list-style: none;margin: 0;padding: 0; justify-content: center">
                     {% for j in 0..9 %}
                         <li id="{{ "#{i}#{j}" }}" class="cell">0</li>
                     {% endfor %}
                 </ul>
             {% endfor %}
         </div>
-
+        <div style="display: flex; flex-direction: column;">
+            <div style="display: flex; ">
+                <div class="emoji" style="font-size: 30px; text-align: center; padding-top: 20px; height: 40px"
+                     data-emoji="🤑">🤑
+                </div>
+                <div class="emoji" style="font-size: 30px; text-align: center; padding-top: 20px; height: 40px"
+                     data-emoji="🤣">🤣
+                </div>
+                <div class="emoji" style="font-size: 30px; text-align: center; padding-top: 20px; height: 40px"
+                     data-emoji="🥶">🥶
+                </div>
+                <div class="emoji" style="font-size: 30px; text-align: center; padding-top: 20px; height: 40px"
+                     data-emoji="🤢">🤢
+                </div>
+            </div>
+            
+            <div id="test" style="align-self: center; width: 50px; height: 50px"></div>
+        </div>
         <div>
             {% if isSpectator %}
-                <h3 style="margin-left: 50px">{{ user1Username }}</h3>
+                <h3>{{ user1Username }}</h3>
             {% else %}
-                <h3 style="margin-left: 50px">Enemy Board</h3>
+                <h3>Enemy Board</h3>
             {% endif %}
             {% for i in 0..9 %}
-                <ul style="display: flex;list-style: none;margin: 0; justify-content: center">
+                <ul style="display: flex;list-style: none;margin: 0;padding: 0; justify-content: center">
                     {% for j in 0..9 %}
                         <li id="{{ "#{i} #{j}" }}" class="cells">0</li>
                     {% endfor %}
@@ -120,11 +137,14 @@
                          data-position="{{ "false" }}">
                         {% for j in 1..boatSizes[i-1] %}
                             {% if j == 1 %}
-                                <div class="ship" style="background-image: url('{{ asset('img/shipBack.png') }}');">{{ i }}</div>
+                                <div class="ship"
+                                     style="background-image: url('{{ asset('img/shipBack.png') }}');">{{ i }}</div>
                             {% elseif j == boatSizes[i-1] %}
-                                <div class="ship" style="background-image: url('{{ asset('img/shipFront.png') }}');">{{ i }}</div>
+                                <div class="ship"
+                                     style="background-image: url('{{ asset('img/shipFront.png') }}');">{{ i }}</div>
                             {% else %}
-                                <div class="ship" style="background-image: url('{{ asset('img/shipBody.png') }}');">{{ i }}</div>
+                                <div class="ship"
+                                     style="background-image: url('{{ asset('img/shipBody.png') }}');">{{ i }}</div>
                             {% endif %}
                         {% endfor %}
                     </div>
