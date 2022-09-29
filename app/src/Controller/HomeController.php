@@ -69,6 +69,19 @@ class HomeController extends AbstractController
 
         $leaderboards = $entityManager->getRepository(User::class)->findBy([], array('points' => 'DESC'), 10);
 
+        $userBadges = json_decode($thisUser->getBadges());
+
+        if ($leaderboards[0] === $thisUser) {
+            if (!array_search(15, $userBadges)) {
+                $userBadges[] = 15;
+            }
+        }
+
+        $userBadges = json_encode($userBadges);
+        $thisUser->setBadges($userBadges);
+        $entityManager->persist($thisUser);
+        $entityManager->flush();
+
         return $this->render('home/home.html.twig', ['ongoingBattles' => $ongoingBattles, 'leaderboards' => $leaderboards, 'lastMatches' => $lastMatches, 'matchesMissingAPlayer' => $matchesMissingAPlayer]);
     }
 }

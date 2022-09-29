@@ -2,6 +2,10 @@
 
 {% block title %}PROFILE{% endblock %}
 
+{% block javascripts %}
+    {{ encore_entry_script_tags('profile') }}
+{% endblock %}
+
 {% block body %}
 
     <div class="profile-navbar">
@@ -10,12 +14,17 @@
 
     <div class="profile-background">
         <div class="profile-background-left-section">
-            <div class="profile-picture"></div>
+            <div id="profile-picture" class="profile-picture"
+                 style="background-image: url('{{ asset('img/p'~user.getProfilePicture()~'.png') }}');">
+                {% if app.user == user %}
+                    <div id="change-profile-picture-button" class="change-profile-picture-button">✏️</div>
+                {% endif %}
+            </div>
 
             <div class="profile-text">
-                <div class="profile-username">{{ app.user.username }}</div>
+                <div class="profile-username">{{ user.username }}</div>
 
-                <div class="profile-member-since">Member since</div>
+                <div class="profile-member-since">Left Earth {{ user.getRegistrationDate()|date|ago }}</div>
             </div>
         </div>
 
@@ -23,19 +32,52 @@
             <div class="profile-badges-title">BADGES</div>
 
             <div class="profile-badges">
-                <div class="profile-badge"></div>
-                <div class="profile-badge"></div>
-                <div class="profile-badge"></div>
-                <div class="profile-badge"></div>
-                <div class="profile-badge"></div>
+                {% for badge in badges %}
+                    <div class="profile-badge tooltip"
+                         style="background-image: url('{{ asset('img/b'~badge.id~'.png') }}');">
+                        <span class="tooltiptext"><strong>{{ badge.name }}</strong><br/>{{ badge.description }}</span>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>
 
+    <div id="profile-picture-modal-container" class="profile-picture-modal-container">
+        <div id="profile-picture-modal" class="profile-picture-modal">
+            {% for i in 1..10 %}
+                <div class="profile-picture-modal-element"
+                     style="background-image: url('{{ asset('img/p'~i~'.png') }}');" data-picture="{{ i }}"
+                     data-path="p{{ i }}"></div>
+            {% endfor %}
+        </div>
+    </div>
+
     <div class="profile-stats">
-        <div class="profile-stat">MATCHES PLAYED<p class="stat-text">{{ app.user.matches }}</p></div>
-        <div class="profile-stat">POINTS<p class="stat-text">{{ app.user.points }}</p></div>
-        <div class="profile-stat">TOP BADGE<p class="stat-text">1200</p></div>
+        <div class="profile-stat">MATCHES PLAYED<p class="stat-text" style="color: #cd3299">{{ user.matches }}</p></div>
+        <div class="profile-stat">POINTS<p class="stat-text" style="color: yellowgreen">{{ user.points }}</p></div>
+        <div class="profile-stat">RANK
+            {% if rank == 4 %}
+                <div class="profile-badge-small tooltip"
+                     style="background-image: url('{{ asset('img/rank'~rank~'.png') }}'); filter: drop-shadow(0 0 0.75rem #6c4134);">
+                    <span class="tooltiptext"><strong>IRIDIUM</strong></span>
+                </div>
+            {% elseif rank == 3 %}
+                <div class="profile-badge-small tooltip"
+                     style="background-image: url('{{ asset('img/rank'~rank~'.png') }}'); filter: drop-shadow(0 0 0.75rem #9d8503);">
+                    <span class="tooltiptext"><strong>PLATINUM</strong></span>
+                </div>
+            {% elseif rank == 2 %}
+                <div class="profile-badge-small tooltip"
+                     style="background-image: url('{{ asset('img/rank'~rank~'.png') }}'); filter: drop-shadow(0 0 0.75rem #dab600);">
+                    <span class="tooltiptext"><strong>PALLADIUM</strong></span>
+                </div>
+            {% elseif rank == 1 %}
+                <div class="profile-badge-small tooltip"
+                     style="background-image: url('{{ asset('img/rank'~rank~'.png') }}'); filter: drop-shadow(0 0 0.75rem #ff0044);">
+                    <span class="tooltiptext"><strong>RHODIUM</strong></span>
+                </div>
+            {% endif %}
+        </div>
     </div>
 
 
@@ -60,32 +102,37 @@
                 {% for lastMatch in lastMatches %}
                     <tr class="driver">
                         <td class="position">
-                            {% if app.user.id == lastMatch.winner.id %}
+                            {% if user.id == lastMatch.winner.id %}
                                 🏆
                             {% else %}
                                 ❌
                             {% endif %}
                         </td>
-                        {% if app.user.id == lastMatch.winner.id %}
+                        {% if user.id == lastMatch.winner.id %}
                         <td class="driver" style="border-left: 4px solid yellowgreen; white-space: nowrap">
                     {% else %}
                         <td class="driver" style="border-left: 4px solid rgb(194,0,0); white-space: nowrap">
                             {% endif %}
-                            {% if app.user == lastMatch.user1 %}
-                                <strong>{{ lastMatch.user1.username }}</strong> VS {{ lastMatch.user2.username }}
+                            {% if lastMatch.winner == lastMatch.user1 %}
+                                <strong><a href="/profile?id={{ lastMatch.user1.id }}"
+                                           style="color: white">{{ lastMatch.user1.username }}</a></strong> VS <a
+                                    href="/profile?id={{ lastMatch.user2.id }}"
+                                    style="color: white">{{ lastMatch.user2.username }}</a>
                             {% else %}
-                                {{ lastMatch.user1.username }} VS
-                                <strong>{{ lastMatch.user2.username }}</strong>
+                                <a href="/profile?id={{ lastMatch.user1.id }}"
+                                   style="color: white">{{ lastMatch.user1.username }}</a> VS
+                                <strong><a href="/profile?id={{ lastMatch.user2.id }}"
+                                           style="color: white">{{ lastMatch.user2.username }}</a></strong>
                             {% endif %}
                         </td>
                         <td>
-                            {% if app.user.id == lastMatch.winner.id %}
+                            {% if user.id == lastMatch.winner.id %}
                                 <span style="color: yellowgreen">WIN</span>
                             {% else %}
                                 <span>LOSE</span>
                             {% endif %}
                         </td>
-                        {% if app.user.id == lastMatch.user1.id %}
+                        {% if user.id == lastMatch.user1.id %}
                             <td class="gap"><span>{{ lastMatch.getUser1Points() }}</span></td>
                         {% else %}
                             <td class="gap"><span>{{ lastMatch.getUser2Points() }}</span></td>
