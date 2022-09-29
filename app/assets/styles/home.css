@@ -145,7 +145,6 @@ h3 {
 
 .boats {
     background: linear-gradient(90deg, rgba(103, 103, 103, 1) 0%, rgba(145, 145, 145, 1) 100%);
-    margin-bottom: 20px;
 }
 
 .boats:hover {
@@ -188,7 +187,9 @@ h3 {
 }
 
 .vertical-checkbox {
-    margin-top: -45px;
+    /*z-index: -50;*/
+    margin-top: -15px;
+    margin-bottom: -20px;
     display: inline-flex;
     justify-content: center;
 }
@@ -234,8 +235,8 @@ h3 {
 
 .ship {
     background-size: 100% 100% !important;
-    width: 50px;
-    height: 50px;
+    width: 47px;
+    height: 47px;
     border: 1px solid white;
     display: flex;
     justify-content: center;
@@ -246,8 +247,8 @@ h3 {
     background-image: url(/public/img/stars.jpg);
     background-size: 200% 200%;
     color: transparent;
-    width: 50px;
-    height: 50px;
+    width: 47px;
+    height: 47px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -258,15 +259,15 @@ h3 {
     background-image: url(/public/img/stars.jpg);
     background-size: 200% 200%;
     color: transparent;
-    width: 50px;
-    height: 50px;
+    width: 47px;
+    height: 47px;
     display: flex;
     justify-content: center;
     align-items: center;
     border: 1px solid black;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1350px) {
     .ship {
         width: 40px;
         height: 40px;
@@ -286,27 +287,35 @@ h3 {
         font-size: 20px;
         width: 40vw;
     }
+
+    #boats {
+        margin-top: 60px !important;
+    }
 }
 
-@media (max-width: 950px) {
+@media (max-width: 1100px) {
     .ship {
-        width: 30px;
-        height: 30px;
+        width: 35px;
+        height: 35px;
     }
 
     .cell {
-        width: 30px;
-        height: 30px;
+        width: 35px;
+        height: 35px;
     }
 
     .cells {
-        width: 30px;
-        height: 30px;
+        width: 35px;
+        height: 35px;
     }
 
     .status-box {
         font-size: 16px;
         width: 50vw;
+    }
+
+    #boats {
+        margin-top: 100px !important;
     }
 }
 
@@ -722,6 +731,19 @@ table td span {
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, 2px -2px 0 yellowgreen, 1px 1px 0 #000;
 }
 
+.profile-home {
+    font-size: 13px;
+    margin: 10px 0;
+    padding: 0 0;
+    color: white;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, 2px -2px 0 #000000, 1px 1px 0 #000;
+    filter: drop-shadow(0 0 0.75rem #cd3299);
+}
+
+.profile-home {
+    cursor: grab;
+}
+
 .profile-badges {
     display: flex;
     justify-content: space-evenly;
@@ -889,6 +911,11 @@ table td span {
 .profile-picture-modal-element:hover {
     animation: pulse 2s linear infinite;
     cursor: grab;
+}
+
+#vs {
+    margin: 0 0;
+    font-size: 25px;
 }
 
 .surrender {

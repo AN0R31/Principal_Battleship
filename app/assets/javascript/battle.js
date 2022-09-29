@@ -12,6 +12,12 @@ import blackHole from '/public/img/blackHole.gif'
 
 turn = turn === 'host' ? 1 : 2; //WHICH USER'S TURN IT IS; 1 -> User1, 2 -> User2;
 
+let destroyedBoats = [];
+if (localStorage.getItem('destroyedBoats') !== null) {
+    destroyedBoats = localStorage.getItem('destroyedBoats').split(',')
+}
+console.log(destroyedBoats)
+
 let status = null;
 
 let isFlipping = false;
@@ -109,7 +115,9 @@ if (Number(isSpectator) === 0) {
         placedBoats = {};
         for (let li of document.getElementsByClassName("cell")) {
             li.innerText = '0';
-            li.style.backgroundColor = 'gray'
+            li.style.backgroundImage = "url('" + stars + "')"
+            li.style.backgroundSize = "200% 200%"
+            li.classList.remove('ship')
         }
         for (let child of document.getElementById('boats').children) {
             child.style.display = 'flex'
@@ -127,7 +135,6 @@ function hideElementById(id) {
 }
 
 function hit(coordinates) {
-
     let cellId = coordinates[0] + coordinates[1]
 
     let targetCell = document.getElementById(cellId)
@@ -138,7 +145,6 @@ function hit(coordinates) {
         targetCell.style.transform = "scaleX(-1)"
     }
     targetCell.setAttribute('data-hit', "true");
-
 }
 
 function hitBoat(coordinates) {
@@ -181,7 +187,6 @@ channel.bind('new-greeting', function (params) {
         }
         /////////////// FOR SPECTATOR ////////////////////
     } else if (Number(isSpectator) === 1) {
-        console.log(params)
         if (params.board === 'guestBoard') {
             if (params.isHit === true) {
                 hitBoat(params.coordinates)
@@ -214,10 +219,55 @@ channel.bind('new-greeting', function (params) {
             }
         }
     }
+
+    console.log(params)
+
+    if (params.isBoatDestroyed) {
+        if ((params.board === 'guestBoard' && Boolean(Number(isHost)))) {
+            if (params.vertical) {
+                for (let i = Number(params.boatY); i < Number(params.boatY) + Number(params.boatSize); i++) {
+                    let cellId = i + " " + Number(params.boatX)
+                    document.getElementById(cellId).style.border = '1px solid white'
+                    destroyedBoats.push(cellId)
+                }
+                console.log(destroyedBoats)
+                localStorage.setItem('destroyedBoats', destroyedBoats)
+            } else {
+                for (let i = Number(params.boatX); i < Number(params.boatX) + Number(params.boatSize); i++) {
+                    let cellId = Number(params.boatY) + " " + i
+                    document.getElementById(cellId).style.border = '1px solid white'
+                    destroyedBoats.push(cellId)
+                }
+                console.log(destroyedBoats)
+                localStorage.setItem('destroyedBoats', destroyedBoats)
+            }
+        } else if ((params.board === 'hostBoard' && !Boolean(Number(isHost)))) {
+            if (params.vertical) {
+                for (let i = Number(params.boatY); i < Number(params.boatY) + Number(params.boatSize); i++) {
+                    let cellId = i + " " + Number(params.boatX)
+                    document.getElementById(cellId).style.border = '1px solid white'
+                    destroyedBoats.push(cellId)
+                }
+                console.log(destroyedBoats)
+                localStorage.setItem('destroyedBoats', destroyedBoats)
+            } else {
+                for (let i = Number(params.boatX); i < Number(params.boatX) + Number(params.boatSize); i++) {
+                    let cellId = Number(params.boatY) + " " + i
+                    document.getElementById(cellId).style.border = '1px solid white'
+                    destroyedBoats.push(cellId)
+                }
+                console.log(destroyedBoats)
+                localStorage.setItem('destroyedBoats', destroyedBoats)
+            }
+        }
+    }
 });
 
 channel.bind('join', function (params) {
     document.getElementById('vs').innerHTML = params.user1Username + " VS " + params.user2Username;
+
+    localStorage.removeItem('destroyedBoats')
+
     user2Username = true;
     setStatus();
 });
@@ -301,20 +351,27 @@ let boats = document.querySelectorAll('.boats')
 
 for (let boat of boats) {
     boat.addEventListener("dragstart", (event) => {
+        let crt = boat.cloneNode(true);
+        crt.style.position = "absolute";
+        crt.style.color = "transparent"
+        crt.style.top = "0px";
+        crt.style.left = "-1000px";
+
         if (document.getElementById('vertical').checked) {
-            document.getElementById(boat.getAttribute('id')).style.display = 'block'
-            for (let child of document.getElementById(boat.getAttribute('id')).children) {
+            crt.style.display = "block"
+            for (let child of crt.children) {
                 child.style.transform = "rotate(90deg)"
             }
             boat.setAttribute('data-rotation', "1")
         } else {
-            document.getElementById(boat.getAttribute('id')).style.display = 'flex'
-            for (let child of document.getElementById(boat.getAttribute('id')).children) {
+            // document.getElementById(boat.getAttribute('id')).style.display = 'flex'
+            for (let child of crt.children) {
                 child.style.removeProperty('transform')
             }
             boat.setAttribute('data-rotation', "0")
         }
-        event.dataTransfer.setDragImage(document.getElementById(boat.getAttribute('id')), 25, 25);
+        document.body.appendChild(crt);
+        event.dataTransfer.setDragImage(crt, 25, 25);
         dragged = event.target;
     });
 }
@@ -520,6 +577,12 @@ function loadHits() {
                 cell.style.transform = "scaleX(-1)"
             }
             cell.setAttribute('data-hit', 'true')
+        }
+    }
+
+    if (destroyedBoats) {
+        for (let i = 0; i < destroyedBoats.length; i++) {
+            document.getElementById(destroyedBoats[i]).style.border = '1px solid white'
         }
     }
 }

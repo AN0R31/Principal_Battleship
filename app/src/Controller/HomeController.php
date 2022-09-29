@@ -82,6 +82,19 @@ class HomeController extends AbstractController
         $entityManager->persist($thisUser);
         $entityManager->flush();
 
-        return $this->render('home/home.html.twig', ['ongoingBattles' => $ongoingBattles, 'leaderboards' => $leaderboards, 'lastMatches' => $lastMatches, 'matchesMissingAPlayer' => $matchesMissingAPlayer]);
+        $userOngoingBattle1 = $entityManager->getRepository(Battle::class)->findOneBy(['user1_id' => $thisUser->getId(), 'winner_id' => null]);
+        $userOngoingBattle2 = $entityManager->getRepository(Battle::class)->findOneBy(['user2_id' => $thisUser->getId(), 'winner_id' => null]);
+
+        if ($userOngoingBattle1 === null) {
+            if ($userOngoingBattle2 === null) {
+                $userOngoingBattle = null;
+            } else {
+                $userOngoingBattle = $userOngoingBattle2;
+            }
+        } else {
+            $userOngoingBattle = $userOngoingBattle1;
+        }
+
+        return $this->render('home/home.html.twig', ['ongoingBattles' => $ongoingBattles, 'leaderboards' => $leaderboards, 'lastMatches' => $lastMatches, 'matchesMissingAPlayer' => $matchesMissingAPlayer, 'userOngoingBattle' => $userOngoingBattle]);
     }
 }
