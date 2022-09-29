@@ -128,6 +128,7 @@ function hideElementById(id) {
 }
 
 function hit(coordinates) {
+
     let cellId = coordinates[0] + coordinates[1]
 
     let targetCell = document.getElementById(cellId)
@@ -138,6 +139,7 @@ function hit(coordinates) {
         targetCell.style.transform = "scaleX(-1)"
     }
     targetCell.setAttribute('data-hit', "true");
+
 }
 
 function hitBoat(coordinates) {
@@ -180,11 +182,12 @@ channel.bind('new-greeting', function (params) {
         }
         /////////////// FOR SPECTATOR ////////////////////
     } else if (Number(isSpectator) === 1) {
+        console.log(params)
         if (params.board === 'guestBoard') {
             if (params.isHit === true) {
-                hit(params.coordinates)
-            } else {
                 hitBoat(params.coordinates)
+            } else {
+                hit(params.coordinates)
             }
         } else {
             if (params.isHit === true) {
@@ -560,33 +563,34 @@ function cellEvent(event) {
         dataToSend.set('hit', cell.getAttribute('id'))
         dataToSend.set('channel', channelName)
         dataToSend.set('battle_id', battle_id)
-        axios.post("/battle/hit", dataToSend).then(function (response) {
+        if (Number(isSpectator) !== 1)
+            axios.post("/battle/hit", dataToSend).then(function (response) {
 
-            if (response.data.isHit === true) {
-                cell.style.backgroundImage = "url('" + scraps + "'), " + "url('" + fire + "'), " + "url('" + stars + "')"
-                cell.style.backgroundSize = '100% 100%';
-                if (Boolean(Math.round(Math.random()))) {
-                    cell.style.transform = "scaleX(-1)"
+                if (response.data.isHit === true) {
+                    cell.style.backgroundImage = "url('" + scraps + "'), " + "url('" + fire + "'), " + "url('" + stars + "')"
+                    cell.style.backgroundSize = '100% 100%';
+                    if (Boolean(Math.round(Math.random()))) {
+                        cell.style.transform = "scaleX(-1)"
+                    }
+                } else {
+                    cell.style.backgroundImage = "url('" + blackHole + "')"
+                    cell.style.backgroundSize = '100% 100%';
+                    if (Boolean(Math.round(Math.random()))) {
+                        cell.style.transform = "scaleX(-1)"
+                    }
                 }
-            } else {
-                cell.style.backgroundImage = "url('" + blackHole + "')"
-                cell.style.backgroundSize = '100% 100%';
-                if (Boolean(Math.round(Math.random()))) {
-                    cell.style.transform = "scaleX(-1)"
+
+                if (response.data.allBoatsAreDestroyed === true) {
+                    document.getElementById('vs').innerHTML = 'YOU WON!'
+
+                    const dataToSendToEnd = new FormData;
+                    dataToSendToEnd.set('battle_id', battle_id)
+                    dataToSendToEnd.set('channel', channelName)
+                    axios.post("/battle/end", dataToSendToEnd)
+
                 }
-            }
 
-            if (response.data.allBoatsAreDestroyed === true) {
-                document.getElementById('vs').innerHTML = 'YOU WON!'
-
-                const dataToSendToEnd = new FormData;
-                dataToSendToEnd.set('battle_id', battle_id)
-                dataToSendToEnd.set('channel', channelName)
-                axios.post("/battle/end", dataToSendToEnd)
-
-            }
-
-        });
+            });
 
     }
 }
@@ -601,6 +605,7 @@ if (Number(hasMatchEnded) === 1 || Number(haveBoatsBeenSet) === 0 || Number(have
     removeEventListenersFromGrid()
 }
 
+/////////////////////////////////////////EMOJI CHAT///////////////////////////////////////////////////////////////
 let emojiElements = document.getElementsByClassName('emoji');
 var container = document.getElementById('test');
 let index = 0;
@@ -673,3 +678,4 @@ for (const emojiElement of emojiElements) {
         axios.post('/emoji', dataToSend);
     });
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
