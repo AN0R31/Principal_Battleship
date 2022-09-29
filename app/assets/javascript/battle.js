@@ -741,21 +741,25 @@ for (const emojiElement of emojiElements) {
     });
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+let leaveButtonElement = null;
 
-let leaveButtonElement = document.getElementById('button-surrender');
+if (isSpectator !== 1)
+    leaveButtonElement = document.getElementById('button-surrender');
 
-leaveButtonElement.addEventListener('click', function () {
-    let dataToSend = new FormData;
-    dataToSend.set('channel', channelName);
-    if (user2Username)
-        axios.post('/battle/surrender', dataToSend)
-})
+if (leaveButtonElement != null)
+    leaveButtonElement.addEventListener('click', function () {
+        let dataToSend = new FormData;
+        dataToSend.set('channel', channelName);
 
-pusher.bind('surrender', function (params) {
-    if ((params.isHost === true && Boolean(Number(isHost)) === false) || (params.isHost === false && Boolean(Number(isHost)) === true)) {
-        const dataToSendToEnd = new FormData;
-        dataToSendToEnd.set('battle_id', battle_id)
-        dataToSendToEnd.set('channel', channelName)
-        axios.post("/battle/end", dataToSendToEnd)
-    }
-});
+        if (user2Username)
+            axios.post('/battle/surrender', dataToSend)
+
+        pusher.bind('surrender', function (params) {
+            if ((params.isHost === true && Boolean(Number(isHost)) === false) || (params.isHost === false && Boolean(Number(isHost)) === true)) {
+                const dataToSendToEnd = new FormData;
+                dataToSendToEnd.set('battle_id', battle_id)
+                dataToSendToEnd.set('channel', channelName)
+                axios.post("/battle/end", dataToSendToEnd)
+            }
+        });
+    })
