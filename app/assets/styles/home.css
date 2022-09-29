@@ -573,6 +573,11 @@ table td span {
         font-size: 20px;
         width: 97%;
     }
+
+    .surrender {
+        margin-top: 75px;
+        margin-left: 25px !important;
+    }
 }
 
 
@@ -884,4 +889,9 @@ table td span {
 .profile-picture-modal-element:hover {
     animation: pulse 2s linear infinite;
     cursor: grab;
+}
+
+.surrender {
+    border-color: #cd3299;
+    margin-left: 250px;
 }
