@@ -6,13 +6,14 @@ use App\Entity\Battle;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(EntityManagerInterface $entityManager, Request $request): Response
     {
         $thisUser = $this->getUser();
 
@@ -95,6 +96,6 @@ class HomeController extends AbstractController
             $userOngoingBattle = $userOngoingBattle1;
         }
 
-        return $this->render('home/home.html.twig', ['ongoingBattles' => $ongoingBattles, 'leaderboards' => $leaderboards, 'lastMatches' => $lastMatches, 'matchesMissingAPlayer' => $matchesMissingAPlayer, 'userOngoingBattle' => $userOngoingBattle]);
+        return $this->render('home/home.html.twig', ['ongoingBattles' => $ongoingBattles, 'leaderboards' => $leaderboards, 'lastMatches' => $lastMatches, 'matchesMissingAPlayer' => $matchesMissingAPlayer, 'userOngoingBattle' => $userOngoingBattle, 'error' => $request->query->get('error')]);
     }
 }

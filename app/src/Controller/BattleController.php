@@ -153,10 +153,10 @@ class BattleController extends AbstractController
         $ongoingBattle2 = $entityManager->getRepository(Battle::class)->findOneBy(['user2_id' => $this->getUser()->getId(), 'winner_id' => null]);
 
         if ($ongoingBattle1 !== null) {
-            return new JsonResponse(['status' => false, 'message' => 'You are already in a battle!']);
+            return $this->redirectToRoute('app_home', ['error' => 'You are already in a battle!']);
         }
         if ($ongoingBattle2 !== null) {
-            return new JsonResponse(['status' => false, 'message' => 'You are already in a battle!']);
+            return $this->redirectToRoute('app_home', ['error' => 'You are already in a battle!']);
         }
 
         $givenPassword = $request->request->get('password') ?? $request->attributes->get('password');

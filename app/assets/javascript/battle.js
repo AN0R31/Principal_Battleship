@@ -12,11 +12,20 @@ import blackHole from '/public/img/blackHole.gif'
 
 turn = turn === 'host' ? 1 : 2; //WHICH USER'S TURN IT IS; 1 -> User1, 2 -> User2;
 
+if (!Boolean(Number(isSpectator))) {
+    document.getElementById('send').style.display = 'none'
+}
+
+console.log(!Boolean(Number(haveBoatsBeenSet)))
+if (!Boolean(Number(haveBoatsBeenSet))) {
+    console.log('1 aaaa')
+    localStorage.removeItem('destroyedBoats')
+}
+
 let destroyedBoats = [];
 if (localStorage.getItem('destroyedBoats') !== null) {
     destroyedBoats = localStorage.getItem('destroyedBoats').split(',')
 }
-console.log(destroyedBoats)
 
 let status = null;
 
@@ -98,8 +107,9 @@ if (Number(isSpectator) === 0) {
         dataToSend.set('channel', channelName)
         axios.post('/battle/load', dataToSend).then(function (response) {
             if (response.data.status === true) {
-                if (response.data.haveUser1BoatsBeenSet === false || response.data.haveUser2BoatsBeenSet === false)
+                if (response.data.haveUser1BoatsBeenSet === false || response.data.haveUser2BoatsBeenSet === false) {
                     customAlertSuccess('Boats have been set!')
+                }
             } else {
                 customAlertError('Boats have already been set!')
             }
@@ -113,15 +123,26 @@ if (Number(isSpectator) === 0) {
 
     document.getElementById("reset-board").addEventListener('click', function () {
         placedBoats = {};
+        if (!Boolean(Number(isSpectator))) {
+            document.getElementById('send').style.display = 'none'
+        }
         for (let li of document.getElementsByClassName("cell")) {
             li.innerText = '0';
             li.style.backgroundImage = "url('" + stars + "')"
             li.style.backgroundSize = "200% 200%"
             li.classList.remove('ship')
         }
+
+        let length = document.getElementById('boats').children.length
+
         for (let child of document.getElementById('boats').children) {
+            console.log(child)
             child.style.display = 'flex'
             child.classList.add('boat-to-select')
+            length--;
+            if (length === 1) {
+                break
+            }
         }
 
         setStatus()
@@ -227,37 +248,49 @@ channel.bind('new-greeting', function (params) {
             if (params.vertical) {
                 for (let i = Number(params.boatY); i < Number(params.boatY) + Number(params.boatSize); i++) {
                     let cellId = i + " " + Number(params.boatX)
-                    document.getElementById(cellId).style.border = '1px solid white'
-                    destroyedBoats.push(cellId)
+                    if (!Boolean(Number(isSpectator))) {
+                        document.getElementById(cellId).style.border = '1px solid white'
+                        destroyedBoats.push(cellId)
+                    }
                 }
-                console.log(destroyedBoats)
-                localStorage.setItem('destroyedBoats', destroyedBoats)
+                if (!Boolean(Number(isSpectator))) {
+                    localStorage.setItem('destroyedBoats', destroyedBoats)
+                }
             } else {
                 for (let i = Number(params.boatX); i < Number(params.boatX) + Number(params.boatSize); i++) {
                     let cellId = Number(params.boatY) + " " + i
-                    document.getElementById(cellId).style.border = '1px solid white'
-                    destroyedBoats.push(cellId)
+                    if (!Boolean(Number(isSpectator))) {
+                        document.getElementById(cellId).style.border = '1px solid white'
+                        destroyedBoats.push(cellId)
+                    }
                 }
-                console.log(destroyedBoats)
-                localStorage.setItem('destroyedBoats', destroyedBoats)
+                if (!Boolean(Number(isSpectator))) {
+                    localStorage.setItem('destroyedBoats', destroyedBoats)
+                }
             }
         } else if ((params.board === 'hostBoard' && !Boolean(Number(isHost)))) {
             if (params.vertical) {
                 for (let i = Number(params.boatY); i < Number(params.boatY) + Number(params.boatSize); i++) {
                     let cellId = i + " " + Number(params.boatX)
-                    document.getElementById(cellId).style.border = '1px solid white'
-                    destroyedBoats.push(cellId)
+                    if (!Boolean(Number(isSpectator))) {
+                        document.getElementById(cellId).style.border = '1px solid white'
+                        destroyedBoats.push(cellId)
+                    }
                 }
-                console.log(destroyedBoats)
-                localStorage.setItem('destroyedBoats', destroyedBoats)
+                if (!Boolean(Number(isSpectator))) {
+                    localStorage.setItem('destroyedBoats', destroyedBoats)
+                }
             } else {
                 for (let i = Number(params.boatX); i < Number(params.boatX) + Number(params.boatSize); i++) {
                     let cellId = Number(params.boatY) + " " + i
-                    document.getElementById(cellId).style.border = '1px solid white'
-                    destroyedBoats.push(cellId)
+                    if (!Boolean(Number(isSpectator))) {
+                        document.getElementById(cellId).style.border = '1px solid white'
+                        destroyedBoats.push(cellId)
+                    }
                 }
-                console.log(destroyedBoats)
-                localStorage.setItem('destroyedBoats', destroyedBoats)
+                if (!Boolean(Number(isSpectator))) {
+                    localStorage.setItem('destroyedBoats', destroyedBoats)
+                }
             }
         }
     }
@@ -267,6 +300,7 @@ channel.bind('join', function (params) {
     document.getElementById('vs').innerHTML = params.user1Username + " VS " + params.user2Username;
 
     localStorage.removeItem('destroyedBoats')
+    console.log('2 aaaa')
 
     user2Username = true;
     setStatus();
@@ -336,6 +370,9 @@ channel.bind('declare_loser', function (params) {
     }
     removeEventListenersFromGrid();
     setStatus()
+
+    localStorage.removeItem('destroyedBoats')
+    console.log('3 aaaa')
 });
 ///////////////////////////////////////////////////////////////////////
 
@@ -356,6 +393,8 @@ for (let boat of boats) {
         crt.style.color = "transparent"
         crt.style.top = "0px";
         crt.style.left = "-1000px";
+        crt.classList.remove('boat-to-select')
+
 
         if (document.getElementById('vertical').checked) {
             crt.style.display = "block"
@@ -461,8 +500,12 @@ for (let cell of cells) {
                     }
 
                     let remainingBoatsToSelect = document.getElementsByClassName('boat-to-select')
+                    console.log(remainingBoatsToSelect)
                     if (remainingBoatsToSelect.item(0) === null) {
                         customAlertSuccess('All ships are now placed on the board!')
+                        if (!Boolean(Number(isSpectator))) {
+                            document.getElementById('send').style.display = 'block'
+                        }
                     }
                 } else if (Number(dragged.getAttribute('data-rotation')) === 1) { ///////
                     for (let i = 0; i < dragged.getAttribute('data-size'); i++) {
@@ -490,6 +533,9 @@ for (let cell of cells) {
                     let remainingBoatsToSelect = document.getElementsByClassName('boat-to-select')
                     if (remainingBoatsToSelect.item(0) === null) {
                         customAlertSuccess('All ships are now placed on the board!')
+                        if (!Boolean(Number(isSpectator))) {
+                            document.getElementById('send').style.display = 'block'
+                        }
                     }
                 }
 
@@ -553,9 +599,9 @@ function loadHits() {
     } else {
         for (let index in hitsTaken) {
             if (hitsTaken[index].isHit) {
-                hit(hitsTaken[index].posY + hitsTaken[index].posX);
-            } else {
                 hitBoat(hitsTaken[index].posY + hitsTaken[index].posX);
+            } else {
+                hit(hitsTaken[index].posY + hitsTaken[index].posX);
             }
         }
     }
