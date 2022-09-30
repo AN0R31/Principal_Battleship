@@ -267,6 +267,17 @@ h3 {
     border: 1px solid black;
 }
 
+.home-logout-button {
+    width: 150px;
+    background-color: black;
+    color: yellowgreen;
+    text-align: center;
+    align-self: center;
+    padding: 10px 0;
+    border-radius: 5px;
+    border: 1px solid yellowgreen;
+}
+
 @media (max-width: 1350px) {
     .ship {
         width: 40px;
@@ -290,6 +301,10 @@ h3 {
 
     #boats {
         margin-top: 60px !important;
+    }
+
+    .home-logout-button {
+        width: 100px;
     }
 }
 
@@ -547,16 +562,16 @@ table td span {
 /* on smaller viewports remove the third column from sight */
 @media (max-width: 1050px) {
 
-    table {
-        width: 90%;
-    }
-
     table tr > *:nth-child(1) {
         display: none;
     }
 
     table td.driver {
         padding-right: 5rem;
+    }
+
+    .home-logout-button {
+        width: 60px;
     }
 }
 
@@ -593,7 +608,8 @@ table td span {
 .coin-flip-container {
     z-index: 500;
     display: none;
-    background-color: #ffffff;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
     width: 400px;
     padding: 35px;
     position: absolute;
@@ -601,6 +617,7 @@ table td span {
     top: 50%;
     left: 50%;
     box-shadow: 15px 30px 35px rgba(0, 0, 0, 0.1);
+    border: 3px solid rgba(255, 255, 255, 0.25);
     border-radius: 10px;
     -webkit-perspective: 300px;
     perspective: 300px;
@@ -608,13 +625,13 @@ table td span {
 
 .stats {
     display: flex;
-    color: #101020;
     font-weight: 500;
     padding: 20px;
     margin-bottom: 40px;
     margin-top: 55px;
-    box-shadow: 0 0 20px rgba(0, 139, 253, 0.25);
+    box-shadow: 0 0 20px yellowgreen;
     text-align: center;
+    justify-content: center;
 
 }
 
@@ -664,8 +681,6 @@ table td span {
         transform: rotateX(2160deg);
     }
 }
-
-
 
 
 .profile-background {
