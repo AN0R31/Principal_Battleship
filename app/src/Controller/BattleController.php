@@ -440,12 +440,41 @@ class BattleController extends AbstractController
     }
 
     #[Route('/battle/surrender', name: 'surrender', methods: ['post'])]
-    public function leave(Request $request, Pusher $pusher, EntityManagerInterface $entityManager)
+    public function surrender(Request $request, Pusher $pusher, EntityManagerInterface $entityManager)
     {
         $battle = $entityManager->getRepository(Battle::class)->findOneBy(["id" => $request->request->get('channel')]);
-        $isHost = $this->getUser() === $battle->getUser1();
 
-        $pusher->trigger($request->request->get('channel'), 'surrender', ['isHost' => $isHost]);
-        return new JsonResponse(['state' => true]);
+        if ($battle->getWinner())
+            return new JsonResponse(['status' => false]);
+
+        $loser = $this->getUser();
+        $winner = $loser === $battle->getUser1() ? $battle->getUser2() : $battle->getUser1();
+
+        ///////////////////////////ADD POINTS///////////////////////////////
+        if ($winner === $battle->getUser1()) {
+            $battle->setUser1Points($battle->getUser1Points() + 50);
+            $battle->setUser2Points($battle->getUser2Points() + 5);
+        } else {
+            $battle->setUser2Points($battle->getUser2Points() + 50);
+            $battle->setUser1Points($battle->getUser1Points() + 5);
+        }
+
+        $winner->addPoints(50);
+        $winner->addMatches(1);
+        $entityManager->persist($winner);
+
+        $loser->addPoints(5);
+        $loser->addMatches(1);
+        $entityManager->persist($loser);
+        //////////////////////////////////////////////////////////////////
+
+        $battle->setWinner($winner);
+        $entityManager->persist($battle);
+
+        $entityManager->flush();
+
+        $pusher->trigger($request->request->get('channel'), 'declare_loser', ['isHostWinner' => $battle->getUser1()->getId() !== $this->getUser()->getId(), 'winner' => $battle->getWinner()->getUsername()]);
+        return new JsonResponse(['status' => true]);
+
     }
 }

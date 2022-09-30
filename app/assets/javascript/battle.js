@@ -799,13 +799,4 @@ if (leaveButtonElement != null)
 
         if (user2Username)
             axios.post('/battle/surrender', dataToSend)
-
-        pusher.bind('surrender', function (params) {
-            if ((params.isHost === true && Boolean(Number(isHost)) === false) || (params.isHost === false && Boolean(Number(isHost)) === true)) {
-                const dataToSendToEnd = new FormData;
-                dataToSendToEnd.set('battle_id', battle_id)
-                dataToSendToEnd.set('channel', channelName)
-                axios.post("/battle/end", dataToSendToEnd)
-            }
-        });
     })
