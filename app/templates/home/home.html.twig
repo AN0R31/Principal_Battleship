@@ -7,8 +7,19 @@
 {% endblock %}
 
 {% block body %}
+    {% if error != null %}
+        <script>
+            let error = '{{ error }}';
+            let status = false;
+        </script>
+    {% else %}
+        <script>
+            let status = true;
+        </script>
+    {% endif %}
 
     <div style="display: flex; justify-content: center">
+        {% dump %}
         <div id="modal-create-match" class="modal-create-match">
             <h3>Create Match</h3>
 

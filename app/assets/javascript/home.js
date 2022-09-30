@@ -1,6 +1,10 @@
 import axios from "axios";
 import {customAlertError, customOneFieldForm} from "./customAlerts";
 
+if (status === false) {
+    customAlertError(error)
+}
+
 let createMatchModal = document.getElementById('modal-create-match')
 
 let shipsButtons = document.getElementById('form-section-ships-create-match').children
